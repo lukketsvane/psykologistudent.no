@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface BentoGridProps {
@@ -49,7 +50,7 @@ export const BentoItem: React.FC<BentoItemProps> = ({
         bg-white 
         rounded-3xl
         border border-stone-200
-        p-8 relative group flex flex-col
+        p-8 relative group flex flex-col overflow-hidden
         hover:border-orange-300
         transition-all duration-300 ease-out
         ${className}
