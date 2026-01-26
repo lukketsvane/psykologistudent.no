@@ -1,62 +1,64 @@
+
 # psykologistudent.no
 
-Her er kjeldekoden til nettsida di. Me har bygd ho med React og Vite.
+## Enklere redigering (MDX-stil)
 
-## Endra innhald
+Me har oppdatert nettsida slik at du kan skriva innhaldet som "levande dokument". 
+Du kan blanda tekst, bilete og spesialkomponentar (som PixelGame) fritt.
 
-Alt innhald ligg i mappa `content/`. Du treng ikkje kunna programmering for å gjera endringar her. Filene er `.tsx`, men du skal berre endra teksten mellom hermeteikna.
+### 1. Endra tekst og innhald
 
-### Mappestruktur
+Gå til `content/` mappa. Her finn du filer som `hjem.tsx`, `om-meg.tsx` osv.
+Disse filene er nå **React Komponenter**. Det betyr at du skriv HTML/Tekst direkte.
 
-```
-content/
-├── hjem.tsx           # Forsida
-├── om-meg.tsx         # Om meg
-├── kontakt.tsx        # E-post og lenker
-├── site.tsx           # Namn, bilete og fargar
-├── cv.tsx             # Utdanning og erfaring
-├── forskning.tsx      # Publikasjonar
-└── tjenester.tsx      # Tenester
-```
-
-### Korleis endra tekst? (t.d. `hjem.tsx`)
-
-Når du opnar fila ser du noko slikt:
+**Døme (hjem.tsx):**
 
 ```tsx
-export const welcomeMD = `
-Sliter du med å knekke koden på bacheloroppgaven?
+import React from 'react';
+import { Prose } from '../components/Prose';
 
-Jeg tilbyr **skreddersydd veiledning**.
-`;
+export default function Hjem() {
+  return (
+    <div>
+       <h1>Tittel her</h1>
+       <p>
+         Dette er eit avsnitt. 
+         Du kan bruka <strong>feit skrift</strong> eller <em>kursiv</em>.
+       </p>
+       
+       {/* Du kan leggja inn komponentar kor som helst! */}
+       <MinSpesialKnapp />
+    </div>
+  );
+}
 ```
 
-*   Skriv teksten din heilt vanleg.
-*   Bruk `**tekst**` for å få **feit skrift**.
-*   Bruk `[tekst](https://...)` for å laga lenkje.
-*   Lag nytt avsnitt med å trykka enter to gonger.
+### 2. Endra struktur (Legg til/fjern boksar)
 
-### Korleis endra CV? (`cv.tsx`)
+Alt oppsettet ligg i `content/sections.tsx`.
+Dette er ei liste over alle boksane på framsida.
 
-Her ligg data i lister. For å leggja til ein ny jobb, kopierer du berre ei blokk mellom `{ ... }` og limer ho inn.
+For å leggja til ein ny boks:
+1. Lag ei ny fil i `content/`, f.eks `ny-boks.tsx`.
+2. Importer ho i `sections.tsx`.
+3. Legg ho til i lista:
 
 ```tsx
-export const EXPERIENCE: ExperienceItem[] = [
-  {
-    role: "Ny Tittel",
-    company: "Ny Stad",
-    description: "Kva gjorde du her?"
-  },
-  // ... andre jobbar
-];
+{
+  id: 'ny-boks',
+  component: <NyBoks />,
+  colSpan: 1, // Hvor bred? (1-4)
+  rowSpan: 1, // Hvor høy? (1-3)
+}
 ```
 
-### Køyra lokalt
+### 3. Ikoner og Bilder
 
-Om du vil testa endringane på di eiga maskin:
+Bilder og hovedinformasjon ligg i `content/site.tsx`.
+Ikoner kan hentast frå `lucide-react` (biblioteket me brukar).
 
-1.  Installer [Node.js](https://nodejs.org/)
-2.  Opna terminalen i denne mappa.
-3.  Køyr `npm install`
-4.  Køyr `npm run dev`
-5.  Gå til lenkja som kjem opp (oftast `http://localhost:5173`).
+---
+
+**Køyra lokalt:**
+1. `npm install`
+2. `npm run dev`

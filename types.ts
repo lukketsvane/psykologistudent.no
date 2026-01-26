@@ -7,19 +7,12 @@ export interface LinkItem {
   icon?: string;
 }
 
-export interface ExperienceItem {
-  year?: string;
-  role: string;
-  company?: string;
-  description?: string;
-}
-
-export interface PublicationItem {
-  title: string;
-  journal?: string;
-  year?: string;
-  url?: string;
-  type?: string;
+export interface SectionConfig {
+  id: string;
+  component: React.ReactNode;
+  colSpan: 1 | 2 | 3 | 4;
+  rowSpan: 1 | 2 | 3;
+  className?: string; // Allow overriding background colors etc
 }
 
 export interface ThemeConfig {
@@ -37,33 +30,11 @@ export interface ThemeConfig {
   font?: string;
 }
 
-export interface SectionLayout {
-  colSpan: 1 | 2 | 3 | 4;
-  rowSpan: 1 | 2 | 3;
-}
-
-export interface LayoutConfig {
-  welcome: SectionLayout;
-  about: SectionLayout;
-  contact: SectionLayout;
-  research: SectionLayout;
-  timeline: SectionLayout;
-}
-
-export interface PortfolioContent {
+export interface SiteConfig {
   name: string;
   tagline: string;
-  welcomeTitle: string;
-  welcomeText: string; // Changed to string for Markdown
-  about: string; // Changed to string for Markdown
   location: string;
-  education: ExperienceItem[];
-  experience: ExperienceItem[];
-  publications: PublicationItem[];
-  skills: string[]; 
-  services: string[]; 
   email: string;
-  socials: LinkItem[];
   images: {
     portrait: string;
     action: string;

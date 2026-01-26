@@ -1,51 +1,16 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { BentoGrid, BentoItem } from './components/BentoGrid';
-import { INITIAL_CONTENT, INITIAL_LAYOUT, INITIAL_THEME, ICON_MAP } from './constants';
-import { PortfolioContent, LayoutConfig, ThemeConfig } from './types';
-import { Mail, ExternalLink, ArrowRight, GraduationCap, Check, Bell, FileText, BookOpen, Briefcase, Award, Menu, X } from 'lucide-react';
-import { PixelGame } from './components/PixelGame';
+import { SECTIONS } from './content/sections';
+import { SITE, THEME } from './content/site';
 import { NeuroDecorations } from './components/NeuroAssets';
-import { SimpleMarkdown } from './components/SimpleMarkdown';
+import { Menu, X } from 'lucide-react';
 
 const App = () => {
-  const [content] = useState<PortfolioContent>(INITIAL_CONTENT);
-  const [layout] = useState<LayoutConfig>(INITIAL_LAYOUT);
-  const [theme] = useState<ThemeConfig>(INITIAL_THEME);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // Merge Experience and Education for the Timeline
-  const timelineItems = useMemo(() => {
-    const edu = content.education.map(e => ({ ...e, type: 'education' }));
-    const exp = content.experience.map(e => ({ ...e, type: 'experience' }));
-    return [...exp, ...edu];
-  }, [content]);
-
-  const handleCreateReminder = () => {
-    const event = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'BEGIN:VEVENT',
-      'SUMMARY:Kontakt Vilde Brecke (Veiledning)',
-      'DESCRIPTION:Husk å sende mail til vilde.brecke@gmail.com angående veiledning.',
-      `DTSTART:${new Date().toISOString().replace(/-|:|\.\d+/g, '')}`,
-      `DTEND:${new Date(Date.now() + 3600000).toISOString().replace(/-|:|\.\d+/g, '')}`,
-      'END:VEVENT',
-      'END:VCALENDAR'
-    ].join('\n');
-
-    const blob = new Blob([event], { type: 'text/calendar;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'Husk_Vilde.ics');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const scrollToSection = (id: string) => {
-    setIsMenuOpen(false); // Close mobile menu if open
+    setIsMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -53,36 +18,32 @@ const App = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme.background} ${theme.textMain} ${theme.font || 'font-sans'} pb-20 transition-all duration-700 ease-in-out`}>
+    <div className={`min-h-screen ${THEME.background} ${THEME.textMain} ${THEME.font || 'font-sans'} pb-20 transition-all duration-700 ease-in-out`}>
       
       {/* Navbar */}
-      <nav className={`sticky top-0 z-50 ${theme.background} border-b ${theme.border} transition-colors duration-700 ease-in-out bg-opacity-90 backdrop-blur-sm`}>
+      <nav className={`sticky top-0 z-50 ${THEME.background} border-b ${THEME.border} transition-colors duration-700 ease-in-out bg-opacity-90 backdrop-blur-sm`}>
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           
           {/* Brand */}
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => scrollToSection('home')}>
-             <div className={`relative w-12 h-12 overflow-hidden rounded-full border-2 ${theme.border} ${theme.accentBorder} transition-colors`}>
-                <img 
-                  src={content.images.portrait} 
-                  alt={content.name}
-                  className="w-full h-full object-cover"
-                />
+             <div className={`relative w-12 h-12 overflow-hidden rounded-full border-2 ${THEME.border} ${THEME.accentBorder} transition-colors`}>
+                <img src={SITE.images.portrait} alt={SITE.name} className="w-full h-full object-cover" />
              </div>
              <div className="flex flex-col">
-                <span className={`font-bold tracking-tight text-lg leading-none ${theme.textMain}`}>{content.name}</span>
-                <span className={`text-xs font-medium ${theme.primary}`}>{content.tagline}</span>
+                <span className={`font-bold tracking-tight text-lg leading-none ${THEME.textMain}`}>{SITE.name}</span>
+                <span className={`text-xs font-medium ${THEME.primary}`}>{SITE.tagline}</span>
              </div>
           </div>
 
           {/* Desktop Nav */}
-          <div className={`hidden md:flex items-center gap-1 bg-white/50 p-1 rounded-full border ${theme.border}`}>
-            {['Hjem', 'Om meg', 'Tjenester', 'Kontakt'].map((item, i) => {
-               const id = item === 'Hjem' ? 'home' : item === 'Om meg' ? 'about' : item === 'Tjenester' ? 'services' : 'contact';
+          <div className={`hidden md:flex items-center gap-1 bg-white/50 p-1 rounded-full border ${THEME.border}`}>
+            {['Hjem', 'Om meg', 'Forskning', 'Kontakt'].map((item, i) => {
+               const map: Record<string, string> = { 'Hjem': 'home', 'Om meg': 'about', 'Forskning': 'research', 'Kontakt': 'contact' };
                return (
                 <button 
                   key={i} 
-                  onClick={() => scrollToSection(id)} 
-                  className={`px-5 py-2 rounded-full text-sm font-medium ${theme.textSecondary} hover:${theme.primaryBg} hover:${theme.primary} transition-all`}
+                  onClick={() => scrollToSection(map[item])} 
+                  className={`px-5 py-2 rounded-full text-sm font-medium ${THEME.textSecondary} hover:${THEME.primaryBg} hover:${THEME.primary} transition-all`}
                 >
                   {item}
                 </button>
@@ -94,26 +55,24 @@ const App = () => {
           <div className="md:hidden">
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)} 
-              className={`p-2 rounded-full hover:${theme.primaryBg} transition-colors`}
+              className={`p-2 rounded-full hover:${THEME.primaryBg} transition-colors`}
               aria-label="Meny"
             >
-              {isMenuOpen ? <X className={theme.textMain} /> : <Menu className={theme.textMain} />}
+              {isMenuOpen ? <X className={THEME.textMain} /> : <Menu className={THEME.textMain} />}
             </button>
           </div>
-          
-          <div className="hidden md:block w-12"></div> {/* Spacer to balance layout */}
         </div>
 
         {/* Mobile Nav Overlay */}
         {isMenuOpen && (
-           <div className={`md:hidden absolute top-20 left-0 w-full ${theme.background} border-b ${theme.border} p-4 shadow-xl flex flex-col gap-2 z-40 animate-in slide-in-from-top-2 duration-200`}>
-              {['Hjem', 'Om meg', 'Tjenester', 'Kontakt'].map((item, i) => {
-               const id = item === 'Hjem' ? 'home' : item === 'Om meg' ? 'about' : item === 'Tjenester' ? 'services' : 'contact';
+           <div className={`md:hidden absolute top-20 left-0 w-full ${THEME.background} border-b ${THEME.border} p-4 shadow-xl flex flex-col gap-2 z-40 animate-in slide-in-from-top-2 duration-200`}>
+              {['Hjem', 'Om meg', 'Forskning', 'Kontakt'].map((item, i) => {
+               const map: Record<string, string> = { 'Hjem': 'home', 'Om meg': 'about', 'Forskning': 'research', 'Kontakt': 'contact' };
                return (
                 <button 
                   key={i} 
-                  onClick={() => scrollToSection(id)} 
-                  className={`w-full text-left px-4 py-3 rounded-xl text-lg font-medium ${theme.textSecondary} hover:${theme.primaryBg} hover:${theme.primary} transition-all`}
+                  onClick={() => scrollToSection(map[item])} 
+                  className={`w-full text-left px-4 py-3 rounded-xl text-lg font-medium ${THEME.textSecondary} hover:${THEME.primaryBg} hover:${THEME.primary} transition-all`}
                 >
                   {item}
                 </button>
@@ -123,219 +82,27 @@ const App = () => {
         )}
       </nav>
 
-      <main className="pt-8 px-4" id="home">
+      <main className="pt-8 px-4" id="main-content">
         <BentoGrid>
-          
-          {/* Welcome / Hero */}
-          <BentoItem 
-            colSpan={layout.welcome.colSpan} 
-            rowSpan={layout.welcome.rowSpan} 
-            className={`justify-center bg-gradient-to-br ${theme.gradientFrom} ${theme.gradientTo} text-white border-transparent`}
-          >
-             <div className="space-y-6 relative z-10">
-                <span className="inline-block px-4 py-1.5 bg-white/10 border border-white/20 rounded-full text-xs font-bold tracking-wider uppercase opacity-90">
-                  👋 Hei student!
-                </span>
-                <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15]">
-                  {content.welcomeTitle}
-                </h1>
-                <div className="opacity-90 leading-relaxed text-lg font-medium max-w-md">
-                   <SimpleMarkdown content={content.welcomeText} />
-                </div>
-                <div className="pt-6 border-t border-white/20 flex items-center gap-4">
-                  <div className={`w-12 h-12 bg-white rounded-full flex items-center justify-center ${theme.primary}`}>
-                     <GraduationCap size={24} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">Jeg hjelper deg i mål</p>
-                    <p className="opacity-70 text-sm">Med faglig trygghet</p>
-                  </div>
-                </div>
-             </div>
-          </BentoItem>
-
-          {/* About / Photo */}
-          <BentoItem 
-            colSpan={layout.about.colSpan} 
-            rowSpan={layout.about.rowSpan}
-            className={`!p-0 overflow-hidden bg-white ${theme.accentBorder} flex flex-col justify-between`} 
-            id="about"
-          >
-            <div className="h-56 w-full relative bg-stone-100 shrink-0">
-               <img 
-                 src={content.images.action} 
-                 alt="Vilde Action" 
-                 className="w-full h-full object-cover"
-               />
-            </div>
-            <div className="p-8 flex flex-col flex-grow">
-              <h2 className={`text-2xl font-bold ${theme.textMain} leading-tight`}>{content.name}</h2>
-              <div className={`inline-block self-start px-3 py-1 ${theme.primaryBg} ${theme.primary} rounded-full text-xs font-bold my-3`}>
-                {content.tagline}
-              </div>
-              <div className={`text-sm ${theme.textSecondary} leading-relaxed font-medium`}>
-                 <SimpleMarkdown content={content.about} />
-              </div>
-            </div>
-          </BentoItem>
-
-          {/* Contact */}
-          <BentoItem 
-            colSpan={layout.contact.colSpan} 
-            rowSpan={layout.contact.rowSpan}
-            className={`!bg-orange-600 text-white !p-0 justify-between items-center text-center group overflow-hidden border-transparent flex flex-col`} 
-            id="contact"
-          >
-             {/* Pixel Game Header */}
-             <div className="w-full">
-                <PixelGame />
-             </div>
-
-             <div className="relative z-10 flex flex-col items-center px-6 pb-8 w-full">
-               <h3 className="text-xl font-bold mb-4">Ta kontakt</h3>
-               
-               <div className="flex items-center justify-center gap-2 w-full">
-                   <a 
-                     href={`mailto:${content.email}`} 
-                     className={`flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-orange-900 rounded-full font-bold text-sm hover:opacity-90 transition-opacity whitespace-nowrap`}
-                   >
-                     Send e-post
-                     <ArrowRight className="w-4 h-4" />
-                   </a>
-                   <button 
-                    onClick={handleCreateReminder}
-                    title="Lag påminnelse i kalender"
-                    className="w-12 h-11 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-                   >
-                       <Bell size={20} className="text-white" />
-                   </button>
-               </div>
-               
-               <div className="flex gap-2 mt-8">
-                 {content.socials?.map((link, i) => (
-                   <a 
-                     key={i}
-                     href={link.url}
-                     target="_blank"
-                     rel="noreferrer"
-                     className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all"
-                   >
-                     {ICON_MAP[link.icon || 'globe'] || <ExternalLink size={16} />}
-                   </a>
-                 ))}
-               </div>
-             </div>
-          </BentoItem>
-
-          {/* RESEARCH & PAPERS */}
-          <BentoItem colSpan={layout.research.colSpan} rowSpan={layout.research.rowSpan} className={`bg-white ${theme.accentBorder}`}>
-             <div className="flex items-center justify-between mb-8">
-                 <h3 className={`text-xs uppercase tracking-widest ${theme.primary} font-bold flex items-center gap-2`}>
-                  <BookOpen size={14} />
-                  Forskning & Publikasjoner
-                 </h3>
-                 <span className="text-[10px] font-medium text-stone-400 uppercase tracking-widest">Utvalgt</span>
-             </div>
-
-             <div className="relative space-y-8">
-                 <div className={`absolute left-[15px] top-2 bottom-2 w-0.5 ${theme.primaryBg} bg-opacity-50`}></div>
-                 
-                 {content.publications.map((pub, i) => (
-                     <a 
-                       href={pub.url} 
-                       target="_blank" 
-                       rel="noreferrer"
-                       key={i} 
-                       className="relative pl-10 flex flex-col group/paper cursor-pointer"
-                     >
-                         <div className={`absolute left-0 top-0 w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center z-10 group-hover/paper:border-orange-200 group-hover/paper:scale-105 transition-all shadow-sm`}>
-                            <FileText size={12} className={`${theme.primary}`} />
-                         </div>
-
-                         <div className="bg-stone-50 group-hover/paper:bg-orange-50/50 rounded-r-xl rounded-bl-xl p-4 transition-colors">
-                             <h4 className={`text-sm font-bold ${theme.textMain} leading-snug group-hover/paper:text-orange-900 transition-colors`}>
-                                 {pub.title}
-                             </h4>
-                             <div className="flex items-center gap-2 mt-2">
-                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-stone-100 ${theme.textSecondary}`}>
-                                     {pub.journal || "Paper"}
-                                 </span>
-                                 {pub.year && <span className="text-[10px] text-stone-400 font-medium">{pub.year}</span>}
-                             </div>
-                         </div>
-                     </a>
-                 ))}
-             </div>
-             
-             <div className="mt-6 flex justify-end">
-                 <a href="https://www.researchgate.net/profile/Vilde-Brecke" target="_blank" rel="noreferrer" className={`text-xs font-bold ${theme.primary} flex items-center gap-1 hover:gap-2 transition-all`}>
-                     Se ResearchGate profil <ArrowRight size={12} />
-                 </a>
-             </div>
-          </BentoItem>
-
-          {/* UNIFIED TIMELINE & SKILLS */}
-          <BentoItem colSpan={layout.timeline.colSpan} rowSpan={layout.timeline.rowSpan} className={`bg-white ${theme.accentBorder}`} id="services">
-             <div className="flex flex-col h-full">
-                
-                {/* 1. Skills Header / Cloud */}
-                <div className="mb-8 border-b border-stone-100 pb-6">
-                   <h3 className={`text-xs uppercase tracking-widest ${theme.textSecondary} mb-4 font-bold flex items-center gap-2`}>
-                     <Award size={14} />
-                     Kompetanse & Ferdigheter
-                   </h3>
-                   <div className="flex flex-wrap gap-2">
-                      {content.skills.map((skill, idx) => (
-                        <span key={idx} className={`text-xs font-semibold px-3 py-1.5 rounded-full ${theme.primaryBg} ${theme.primary} bg-opacity-30 border border-transparent`}>
-                           {skill}
-                        </span>
-                      ))}
-                   </div>
-                </div>
-
-                {/* 2. Unified Timeline */}
-                <div className="flex-grow">
-                   <h3 className={`text-xs uppercase tracking-widest ${theme.textSecondary} mb-6 font-bold flex items-center gap-2`}>
-                    <Briefcase size={14} />
-                    Progresjon
-                   </h3>
-                   <ul className="space-y-6 relative">
-                    <div className="absolute left-[7px] top-2 bottom-2 w-[1px] bg-stone-200"></div>
-                    
-                    {timelineItems.map((item, idx) => (
-                      <li key={idx} className="relative pl-8 group/item">
-                        <div className={`absolute left-[3px] top-1.5 w-[9px] h-[9px] rounded-full border-2 border-white transition-all z-10 ${item.type === 'education' ? 'bg-stone-800' : 'bg-orange-500'} group-hover/item:scale-125`}></div>
-                        
-                        <div className="flex flex-col">
-                          <div className="flex justify-between items-start">
-                             <h4 className={`font-bold ${theme.textMain} text-sm`}>{item.role}</h4>
-                             {item.year && <span className="text-[10px] font-mono text-stone-400">{item.year}</span>}
-                          </div>
-                          <span className={`text-xs font-bold ${theme.primary} uppercase tracking-wide mt-0.5`}>{item.company}</span>
-                          {item.description && (
-                              <p className={`text-xs ${theme.textSecondary} mt-1 leading-relaxed opacity-80`}>
-                                  {item.description}
-                              </p>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-             </div>
-          </BentoItem>
-
+          {SECTIONS.map((section) => (
+            <BentoItem
+              key={section.id}
+              id={section.id}
+              colSpan={section.colSpan}
+              rowSpan={section.rowSpan}
+              className={section.className}
+            >
+              {section.component}
+            </BentoItem>
+          ))}
         </BentoGrid>
 
-        {/* NEURO ASSETS DECORATION */}
         <NeuroDecorations />
 
-        {/* Footer */}
-        <footer className={`max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-6 text-sm font-medium ${theme.textSecondary} opacity-60`}>
+        <footer className={`max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-6 text-sm font-medium ${THEME.textSecondary} opacity-60`}>
            <div className="flex items-center gap-2">
              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-             2026 © Vilde Brecke
+             2026 © {SITE.name}
            </div>
            <div className="flex gap-6">
              <span className="opacity-50 font-bold">NORGE</span>
