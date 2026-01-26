@@ -16,33 +16,33 @@ export const SECTIONS: SectionConfig[] = [
     id: 'home',
     component: <Hjem />,
     colSpan: 2,
-    rowSpan: 2,
-    className: `bg-gradient-to-br ${THEME.gradientFrom} ${THEME.gradientTo} text-white border-transparent`
+    rowSpan: 1,
+    className: `bg-gradient-to-br ${THEME.gradientFrom} ${THEME.gradientTo} text-white border-transparent flex flex-col justify-center`
   },
   {
     id: 'about',
     component: <OmMeg />,
     colSpan: 1,
-    rowSpan: 2,
-    className: 'overflow-hidden !p-0' // Custom override
+    rowSpan: 1,
+    className: 'overflow-hidden !p-0'
   },
   {
     id: 'contact',
     component: <Kontakt />,
     colSpan: 1,
-    rowSpan: 2,
+    rowSpan: 1,
     className: '!bg-orange-600 text-white !p-0 overflow-hidden border-transparent'
-  },
-  {
-    id: 'research',
-    component: <Forskning />,
-    colSpan: 2,
-    rowSpan: 2,
   },
   {
     id: 'cv',
     component: <CV />,
-    colSpan: 2,
+    colSpan: 4,
     rowSpan: 2,
+  },
+  {
+    id: 'research',
+    component: <Forskning />,
+    colSpan: 4,
+    rowSpan: 1,
   }
 ];

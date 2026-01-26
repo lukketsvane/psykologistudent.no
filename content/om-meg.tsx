@@ -5,34 +5,27 @@ import { SITE } from './site';
 
 export default function OmMeg() {
   return (
-    <div className="flex flex-col h-full justify-between">
-      {/* Photo Area */}
-      <div className="h-56 w-full relative bg-stone-100 shrink-0 -mx-8 -mt-8 mb-6 overflow-hidden">
+    <div className="flex flex-col h-full">
+      {/* Photo Area - Compact height for square tile */}
+      <div className="h-40 w-full relative bg-stone-100 shrink-0 -mx-0 -mt-0 overflow-hidden">
           <img 
             src={SITE.images.action} 
             alt="Vilde Action" 
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+            <h2 className="text-xl font-bold text-white leading-tight">{SITE.name}</h2>
+          </div>
       </div>
 
-      <div className="flex-grow">
-        <h2 className="text-2xl font-bold text-stone-900 leading-tight">{SITE.name}</h2>
-        
-        <div className="inline-block px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-xs font-bold my-3">
+      <div className="flex-grow p-6 flex flex-col justify-center">
+        <div className="inline-block self-start px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-[10px] font-bold mb-3 uppercase tracking-wider border border-orange-100">
           {SITE.tagline}
         </div>
         
-        <Prose className="text-sm">
-          <p>
-            Jeg er utdannet psykolog med doktorgrad (Ph.d.) i psykologi.
-          </p>
-          <p>
-            Med bred erfaring som sensor og underviser ved universitetet, vet jeg nøyaktig hva som kreves for å gå fra en <strong>C til en A</strong>.
-          </p>
-          <p>
-            Jeg brenner for å gjøre tungt fagstoff forståelig.
-          </p>
-        </Prose>
+        <p className="text-sm text-stone-600 leading-relaxed font-medium">
+            Erfaren veileder og sensor. Jeg hjelper deg å knekke koden fra <strong>C til A</strong>.
+        </p>
       </div>
     </div>
   );
