@@ -18,13 +18,15 @@ interface BentoItemProps {
   className?: string;
   colSpan?: 1 | 2 | 3 | 4;
   rowSpan?: 1 | 2 | 3;
+  id?: string;
 }
 
 export const BentoItem: React.FC<BentoItemProps> = ({ 
   children, 
   className = "", 
   colSpan = 1, 
-  rowSpan = 1 
+  rowSpan = 1,
+  id
 }) => {
   const colSpanClass = {
     1: "col-span-1",
@@ -41,6 +43,7 @@ export const BentoItem: React.FC<BentoItemProps> = ({
 
   return (
     <div 
+      id={id}
       className={`
         ${colSpanClass} ${rowSpanClass} 
         bg-white 
