@@ -1,65 +1,24 @@
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { BentoGrid, BentoItem } from './components/BentoGrid';
 import { INITIAL_CONTENT, INITIAL_LAYOUT, INITIAL_THEME, ICON_MAP } from './constants';
 import { PortfolioContent, LayoutConfig, ThemeConfig } from './types';
-import { remixVisuals } from './services/geminiService';
-import { Sparkles, Loader2, Mail, ExternalLink, ArrowRight, GraduationCap, Copy, Check, Bell, FileText, BookOpen, Briefcase, Award } from 'lucide-react';
+import { Mail, ExternalLink, ArrowRight, GraduationCap, Check, Bell, FileText, BookOpen, Briefcase, Award } from 'lucide-react';
 import { PixelGame } from './components/PixelGame';
 import { NeuroDecorations } from './components/NeuroAssets';
 
 const App = () => {
-  const [content, setContent] = useState<PortfolioContent>(INITIAL_CONTENT);
-  const [layout, setLayout] = useState<LayoutConfig>(INITIAL_LAYOUT);
-  const [theme, setTheme] = useState<ThemeConfig>(INITIAL_THEME);
-  const [isEnhancing, setIsEnhancing] = useState(false);
-  const [sources, setSources] = useState<string[]>([]);
+  const [content] = useState<PortfolioContent>(INITIAL_CONTENT);
+  const [layout] = useState<LayoutConfig>(INITIAL_LAYOUT);
+  const [theme] = useState<ThemeConfig>(INITIAL_THEME);
   const [showCopyFeedback, setShowCopyFeedback] = useState(false);
   
-  const lastTapRef = useRef<number>(0);
-
   // Merge Experience and Education for the Timeline
   const timelineItems = useMemo(() => {
     const edu = content.education.map(e => ({ ...e, type: 'education' }));
     const exp = content.experience.map(e => ({ ...e, type: 'experience' }));
-    // Simple merge (assuming ordered in constants, or we could sort if years were date objects)
     return [...exp, ...edu];
   }, [content]);
-
-  const handleEnhance = async () => {
-    setIsEnhancing(true);
-    try {
-      await remixVisuals((newTheme) => {
-        setTheme(newTheme);
-      });
-    } catch (e) {
-      console.error("Failed to remix visuals", e);
-    } finally {
-      setIsEnhancing(false);
-    }
-  };
-
-  const handleCopyTheme = () => {
-    const json = JSON.stringify(theme, null, 2);
-    navigator.clipboard.writeText(json).then(() => {
-        setShowCopyFeedback(true);
-        setTimeout(() => setShowCopyFeedback(false), 2000);
-    });
-  };
-
-  const handleButtonPress = (e: React.MouseEvent | React.TouchEvent) => {
-    const now = Date.now();
-    const DOUBLE_TAP_DELAY = 300;
-    
-    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
-        handleCopyTheme();
-    } else {
-        if (!isEnhancing) {
-            handleEnhance();
-        }
-    }
-    lastTapRef.current = now;
-  };
 
   const handleCreateReminder = () => {
     const event = [
@@ -91,15 +50,19 @@ const App = () => {
     }
   };
 
+  // Type safe render helper
+  const renderRichText = (Component: React.ComponentType | React.ReactNode) => {
+    if (React.isValidElement(Component)) return Component;
+    if (typeof Component === 'function') {
+        const C = Component as React.ComponentType;
+        return <C />;
+    }
+    return null;
+  };
+
   return (
     <div className={`min-h-screen ${theme.background} ${theme.textMain} ${theme.font || 'font-sans'} pb-20 transition-all duration-700 ease-in-out`}>
       
-      {/* Toast Notification */}
-      <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-4 py-2 bg-stone-900 text-white text-xs font-bold rounded-full flex items-center gap-2 transition-all duration-300 ${showCopyFeedback ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
-        <Check size={14} className="text-green-400" />
-        Stil kopiert til utklippstavle!
-      </div>
-
       {/* Navbar */}
       <nav className={`sticky top-0 z-50 ${theme.background} border-b ${theme.border} transition-colors duration-700 ease-in-out bg-opacity-90 backdrop-blur-sm`}>
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -133,16 +96,8 @@ const App = () => {
                )
             })}
           </div>
-
-          <button 
-            onClick={handleButtonPress}
-            disabled={isEnhancing}
-            className={`opacity-0 flex items-center gap-2 px-5 py-2.5 bg-white border ${theme.border} ${theme.accentBorder} ${theme.textMain} text-xs font-bold uppercase tracking-wide rounded-full transition-all disabled:opacity-50 select-none active:scale-95`}
-            title="Hemmelig remix knapp"
-          >
-            {isEnhancing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className={`w-4 h-4 ${theme.primary}`} />}
-            {isEnhancing ? "Maler..." : "AI Remix"}
-          </button>
+          
+          <div className="w-12"></div> {/* Spacer to balance layout */}
         </div>
       </nav>
 
@@ -162,9 +117,9 @@ const App = () => {
                 <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15]">
                   {content.welcomeTitle}
                 </h1>
-                <p className="opacity-90 leading-relaxed text-lg font-medium max-w-md">
-                  {content.welcomeText}
-                </p>
+                <div className="opacity-90 leading-relaxed text-lg font-medium max-w-md">
+                  {renderRichText(content.welcomeText)}
+                </div>
                 <div className="pt-6 border-t border-white/20 flex items-center gap-4">
                   <div className={`w-12 h-12 bg-white rounded-full flex items-center justify-center ${theme.primary}`}>
                      <GraduationCap size={24} />
@@ -177,7 +132,7 @@ const App = () => {
              </div>
           </BentoItem>
 
-          {/* About / Photo - Moved next to Welcome */}
+          {/* About / Photo */}
           <BentoItem 
             colSpan={layout.about.colSpan} 
             rowSpan={layout.about.rowSpan}
@@ -196,13 +151,13 @@ const App = () => {
               <div className={`inline-block self-start px-3 py-1 ${theme.primaryBg} ${theme.primary} rounded-full text-xs font-bold my-3`}>
                 {content.tagline}
               </div>
-              <p className={`text-sm ${theme.textSecondary} leading-relaxed font-medium`}>
-                {content.about}
-              </p>
+              <div className={`text-sm ${theme.textSecondary} leading-relaxed font-medium`}>
+                {renderRichText(content.about)}
+              </div>
             </div>
           </BentoItem>
 
-          {/* Contact - Moved to TOP Row (as requested) */}
+          {/* Contact */}
           <BentoItem 
             colSpan={layout.contact.colSpan} 
             rowSpan={layout.contact.rowSpan}
@@ -250,7 +205,7 @@ const App = () => {
              </div>
           </BentoItem>
 
-          {/* RESEARCH & PAPERS (Left side) */}
+          {/* RESEARCH & PAPERS */}
           <BentoItem colSpan={layout.research.colSpan} rowSpan={layout.research.rowSpan} className={`bg-white ${theme.accentBorder}`}>
              <div className="flex items-center justify-between mb-8">
                  <h3 className={`text-xs uppercase tracking-widest ${theme.primary} font-bold flex items-center gap-2`}>
@@ -261,7 +216,6 @@ const App = () => {
              </div>
 
              <div className="relative space-y-8">
-                 {/* Styled Vertical Line */}
                  <div className={`absolute left-[15px] top-2 bottom-2 w-0.5 ${theme.primaryBg} bg-opacity-50`}></div>
                  
                  {content.publications.map((pub, i) => (
@@ -272,7 +226,6 @@ const App = () => {
                        key={i} 
                        className="relative pl-10 flex flex-col group/paper cursor-pointer"
                      >
-                         {/* Icon Node */}
                          <div className={`absolute left-0 top-0 w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center z-10 group-hover/paper:border-orange-200 group-hover/paper:scale-105 transition-all shadow-sm`}>
                             <FileText size={12} className={`${theme.primary}`} />
                          </div>
@@ -299,7 +252,7 @@ const App = () => {
              </div>
           </BentoItem>
 
-          {/* UNIFIED TIMELINE & SKILLS (Combined Section) */}
+          {/* UNIFIED TIMELINE & SKILLS */}
           <BentoItem colSpan={layout.timeline.colSpan} rowSpan={layout.timeline.rowSpan} className={`bg-white ${theme.accentBorder}`} id="services">
              <div className="flex flex-col h-full">
                 
@@ -325,12 +278,10 @@ const App = () => {
                     Progresjon
                    </h3>
                    <ul className="space-y-6 relative">
-                    {/* Continuous vertical line */}
                     <div className="absolute left-[7px] top-2 bottom-2 w-[1px] bg-stone-200"></div>
                     
                     {timelineItems.map((item, idx) => (
                       <li key={idx} className="relative pl-8 group/item">
-                        {/* Timeline Dot (Different color for Edu vs Exp) */}
                         <div className={`absolute left-[3px] top-1.5 w-[9px] h-[9px] rounded-full border-2 border-white transition-all z-10 ${item.type === 'education' ? 'bg-stone-800' : 'bg-orange-500'} group-hover/item:scale-125`}></div>
                         
                         <div className="flex flex-col">
@@ -365,14 +316,6 @@ const App = () => {
              2026 © Vilde Brecke
            </div>
            <div className="flex gap-6">
-             {sources.length > 0 && (
-               <div className="flex gap-3 items-center bg-white px-4 py-2 rounded-full border border-stone-200">
-                 <span className="text-xs font-bold uppercase tracking-wider">Kilder</span>
-                 {sources.map((src, i) => (
-                   <a key={i} href={src} target="_blank" className="hover:text-black transition-colors bg-stone-100 p-1.5 rounded-full"><ExternalLink size={12}/></a>
-                 ))}
-               </div>
-             )}
              <span className="opacity-50 font-bold">NORGE</span>
            </div>
         </footer>

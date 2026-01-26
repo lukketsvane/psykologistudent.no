@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 export interface LinkItem {
   label: string;
   url: string;
@@ -21,18 +23,18 @@ export interface PublicationItem {
 }
 
 export interface ThemeConfig {
-  background: string;       // e.g. "bg-[#fafaf9]"
-  textMain: string;         // e.g. "text-stone-900"
-  textSecondary: string;    // e.g. "text-stone-500"
-  primary: string;          // e.g. "text-orange-700"
-  primaryBg: string;        // e.g. "bg-orange-50"
-  border: string;           // e.g. "border-stone-200"
-  accentBorder: string;     // e.g. "hover:border-orange-400"
-  gradientFrom: string;     // e.g. "from-orange-700"
-  gradientTo: string;       // e.g. "to-amber-800"
-  buttonBg: string;         // e.g. "bg-[#292524]"
-  buttonText: string;       // e.g. "text-white"
-  font?: string;            // e.g. "font-sans", "font-serif", "font-mono"
+  background: string;
+  textMain: string;
+  textSecondary: string;
+  primary: string;
+  primaryBg: string;
+  border: string;
+  accentBorder: string;
+  gradientFrom: string;
+  gradientTo: string;
+  buttonBg: string;
+  buttonText: string;
+  font?: string;
 }
 
 export interface SectionLayout {
@@ -45,15 +47,15 @@ export interface LayoutConfig {
   about: SectionLayout;
   contact: SectionLayout;
   research: SectionLayout;
-  timeline: SectionLayout; // Unified section
+  timeline: SectionLayout;
 }
 
 export interface PortfolioContent {
   name: string;
   tagline: string;
   welcomeTitle: string;
-  welcomeText: string;
-  about: string;
+  welcomeText: React.ComponentType | React.ReactNode; // Updated for Rich Text
+  about: React.ComponentType | React.ReactNode; // Updated for Rich Text
   location: string;
   education: ExperienceItem[];
   experience: ExperienceItem[];
@@ -66,11 +68,4 @@ export interface PortfolioContent {
     portrait: string;
     action: string;
   };
-}
-
-export interface SearchResult {
-  content: PortfolioContent;
-  layout: LayoutConfig;
-  theme: ThemeConfig;
-  sources: string[];
 }

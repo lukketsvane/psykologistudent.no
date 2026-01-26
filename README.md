@@ -1,20 +1,65 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# psykologistudent.no (Vilde Brecke)
 
-This contains everything you need to run your app locally.
+Dette er kildekoden til din personlige porteføljeside. Siden er bygget med React og Vite.
 
-View your app in AI Studio: https://ai.studio/apps/drive/19-Ts0NyZ0TcIZPPM50gFUpHpX0xRYZjy
+## Redigering av innhold
 
-## Run Locally
+Alt innhold på siden ligger i mappen `content/`. Du trenger ikke kunne programmering for å endre teksten her. Filene er `.tsx` (TypeScript), men fungerer som enkle oppskrifter.
 
-**Prerequisites:**  Node.js
+### Mappestruktur i `content/`
 
+```
+content/
+├── hjem.tsx           # Forsiden (Hei student, intro)
+├── om-meg.tsx         # Om meg teksten
+├── kontakt.tsx        # E-post og sosiale lenker
+├── site.tsx           # Navn, bilder, og fargetema
+├── cv.tsx             # Utdanning, erfaring, ferdigheter
+├── forskning.tsx      # Publikasjoner
+└── tjenester.tsx      # Tjenesteliste
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Hvordan endre tekst (Eksempel: `hjem.tsx`)
+
+Når du åpner `content/hjem.tsx` ser du noe slikt:
+
+```tsx
+export const WelcomeText = () => (
+  <>
+    Sliter du med å knekke koden...
+    <br /><br />
+    Jeg tilbyr <strong>skreddersydd veiledning</strong>...
+  </>
+);
+```
+
+*   Skriv vanlig tekst mellom `<>` og `</>`.
+*   Bruk `<br />` for å lage linjeskift.
+*   Bruk `<strong>Tekst</strong>` for å gjøre tekst fet.
+*   Bruk `<em>Tekst</em>` for kursiv.
+
+### Hvordan endre CV og Erfaring (`cv.tsx`)
+
+Her ligger data i lister. For å legge til en ny erfaring, kopier en blokk mellom `{ ... }` og lim den inn.
+
+```tsx
+export const EXPERIENCE: ExperienceItem[] = [
+  {
+    role: "Ny Tittel",
+    company: "Nytt Sted",
+    description: "Hva gjorde du her?"
+  },
+  // ... andre jobber
+];
+```
+
+### Kjøre lokalt
+
+Hvis du vil teste endringene på din egen PC:
+
+1.  Installer [Node.js](https://nodejs.org/)
+2.  Åpne terminalen i denne mappen.
+3.  Kjør `npm install`
+4.  Kjør `npm run dev`
+5.  Gå til lenken som vises (vanligvis `http://localhost:5173`).
