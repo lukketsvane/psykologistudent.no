@@ -15,7 +15,6 @@ const App = () => {
   const [sources, setSources] = useState<string[]>([]);
   const [showCopyFeedback, setShowCopyFeedback] = useState(false);
   
-  // Double tap logic
   const lastTapRef = useRef<number>(0);
 
   // Merge Experience and Education for the Timeline
