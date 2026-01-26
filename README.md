@@ -4,7 +4,7 @@ Her er kjeldekoden til nettsida di. Me har bygd ho med React og Vite.
 
 ## Endra innhald
 
-Alt innhald ligg i mappa `content/`. Du treng ikkje kunna programmering for å gjera endringar her.
+Alt innhald ligg i mappa `content/`. Du treng ikkje kunna programmering for å gjera endringar her. Filene er `.tsx`, men du skal berre endra teksten mellom hermeteikna.
 
 ### Mappestruktur
 
@@ -24,18 +24,17 @@ content/
 Når du opnar fila ser du noko slikt:
 
 ```tsx
-export const WelcomeText = () => (
-  <>
-    Sliter du med å knekke koden...
-    <br /><br />
-    Jeg tilbyr <strong>skreddersydd veiledning</strong>...
-  </>
-);
+export const welcomeMD = `
+Sliter du med å knekke koden på bacheloroppgaven?
+
+Jeg tilbyr **skreddersydd veiledning**.
+`;
 ```
 
-*   Skriv teksten din mellom `<>` og `</>`.
-*   Bruk `<br />` for å laga linjeskift.
-*   Bruk `<strong>Tekst</strong>` for å få **feit skrift**.
+*   Skriv teksten din heilt vanleg.
+*   Bruk `**tekst**` for å få **feit skrift**.
+*   Bruk `[tekst](https://...)` for å laga lenkje.
+*   Lag nytt avsnitt med å trykka enter to gonger.
 
 ### Korleis endra CV? (`cv.tsx`)
 

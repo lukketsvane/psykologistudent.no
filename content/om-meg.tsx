@@ -1,14 +1,11 @@
 
-import React from 'react';
+// Du kan bruke **fet tekst** for å utheve ord.
+// Du kan lage lenker slik: [tekst](https://lenke.no)
 
-// Her redigerer du "Om meg" teksten.
+export const aboutMD = `
+Jeg er utdannet psykolog med doktorgrad (Ph.d.) i psykologi.
 
-export const AboutText = () => (
-  <>
-    Jeg er utdannet psykolog med doktorgrad (Ph.d.) i psykologi. 
-    <br /><br />
-    Med bred erfaring som sensor og underviser ved universitetet, vet jeg nøyaktig hva som kreves for å gå fra en <strong>C til en A</strong>. 
-    <br /><br />
-    Jeg brenner for å gjøre tungt fagstoff forståelig.
-  </>
-);
+Med bred erfaring som sensor og underviser ved universitetet, vet jeg nøyaktig hva som kreves for å gå fra en **C til en A**.
+
+Jeg brenner for å gjøre tungt fagstoff forståelig.
+`;

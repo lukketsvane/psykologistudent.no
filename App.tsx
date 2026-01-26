@@ -3,15 +3,16 @@ import React, { useState, useMemo } from 'react';
 import { BentoGrid, BentoItem } from './components/BentoGrid';
 import { INITIAL_CONTENT, INITIAL_LAYOUT, INITIAL_THEME, ICON_MAP } from './constants';
 import { PortfolioContent, LayoutConfig, ThemeConfig } from './types';
-import { Mail, ExternalLink, ArrowRight, GraduationCap, Check, Bell, FileText, BookOpen, Briefcase, Award } from 'lucide-react';
+import { Mail, ExternalLink, ArrowRight, GraduationCap, Check, Bell, FileText, BookOpen, Briefcase, Award, Menu, X } from 'lucide-react';
 import { PixelGame } from './components/PixelGame';
 import { NeuroDecorations } from './components/NeuroAssets';
+import { SimpleMarkdown } from './components/SimpleMarkdown';
 
 const App = () => {
   const [content] = useState<PortfolioContent>(INITIAL_CONTENT);
   const [layout] = useState<LayoutConfig>(INITIAL_LAYOUT);
   const [theme] = useState<ThemeConfig>(INITIAL_THEME);
-  const [showCopyFeedback, setShowCopyFeedback] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Merge Experience and Education for the Timeline
   const timelineItems = useMemo(() => {
@@ -44,20 +45,11 @@ const App = () => {
   };
 
   const scrollToSection = (id: string) => {
+    setIsMenuOpen(false); // Close mobile menu if open
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  // Type safe render helper
-  const renderRichText = (Component: React.ComponentType | React.ReactNode) => {
-    if (React.isValidElement(Component)) return Component;
-    if (typeof Component === 'function') {
-        const C = Component as React.ComponentType;
-        return <C />;
-    }
-    return null;
   };
 
   return (
@@ -82,6 +74,7 @@ const App = () => {
              </div>
           </div>
 
+          {/* Desktop Nav */}
           <div className={`hidden md:flex items-center gap-1 bg-white/50 p-1 rounded-full border ${theme.border}`}>
             {['Hjem', 'Om meg', 'Tjenester', 'Kontakt'].map((item, i) => {
                const id = item === 'Hjem' ? 'home' : item === 'Om meg' ? 'about' : item === 'Tjenester' ? 'services' : 'contact';
@@ -96,9 +89,38 @@ const App = () => {
                )
             })}
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)} 
+              className={`p-2 rounded-full hover:${theme.primaryBg} transition-colors`}
+              aria-label="Meny"
+            >
+              {isMenuOpen ? <X className={theme.textMain} /> : <Menu className={theme.textMain} />}
+            </button>
+          </div>
           
-          <div className="w-12"></div> {/* Spacer to balance layout */}
+          <div className="hidden md:block w-12"></div> {/* Spacer to balance layout */}
         </div>
+
+        {/* Mobile Nav Overlay */}
+        {isMenuOpen && (
+           <div className={`md:hidden absolute top-20 left-0 w-full ${theme.background} border-b ${theme.border} p-4 shadow-xl flex flex-col gap-2 z-40 animate-in slide-in-from-top-2 duration-200`}>
+              {['Hjem', 'Om meg', 'Tjenester', 'Kontakt'].map((item, i) => {
+               const id = item === 'Hjem' ? 'home' : item === 'Om meg' ? 'about' : item === 'Tjenester' ? 'services' : 'contact';
+               return (
+                <button 
+                  key={i} 
+                  onClick={() => scrollToSection(id)} 
+                  className={`w-full text-left px-4 py-3 rounded-xl text-lg font-medium ${theme.textSecondary} hover:${theme.primaryBg} hover:${theme.primary} transition-all`}
+                >
+                  {item}
+                </button>
+               )
+            })}
+           </div>
+        )}
       </nav>
 
       <main className="pt-8 px-4" id="home">
@@ -118,7 +140,7 @@ const App = () => {
                   {content.welcomeTitle}
                 </h1>
                 <div className="opacity-90 leading-relaxed text-lg font-medium max-w-md">
-                  {renderRichText(content.welcomeText)}
+                   <SimpleMarkdown content={content.welcomeText} />
                 </div>
                 <div className="pt-6 border-t border-white/20 flex items-center gap-4">
                   <div className={`w-12 h-12 bg-white rounded-full flex items-center justify-center ${theme.primary}`}>
@@ -152,7 +174,7 @@ const App = () => {
                 {content.tagline}
               </div>
               <div className={`text-sm ${theme.textSecondary} leading-relaxed font-medium`}>
-                {renderRichText(content.about)}
+                 <SimpleMarkdown content={content.about} />
               </div>
             </div>
           </BentoItem>

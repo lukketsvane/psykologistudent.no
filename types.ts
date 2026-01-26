@@ -54,8 +54,8 @@ export interface PortfolioContent {
   name: string;
   tagline: string;
   welcomeTitle: string;
-  welcomeText: React.ComponentType | React.ReactNode; // Updated for Rich Text
-  about: React.ComponentType | React.ReactNode; // Updated for Rich Text
+  welcomeText: string; // Changed to string for Markdown
+  about: string; // Changed to string for Markdown
   location: string;
   education: ExperienceItem[];
   experience: ExperienceItem[];
