@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useMemo } from 'react';
 import { BentoGrid, BentoItem } from './components/BentoGrid';
 import { INITIAL_CONTENT, INITIAL_LAYOUT, INITIAL_THEME, ICON_MAP } from './constants';
@@ -107,14 +108,14 @@ const App = () => {
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => scrollToSection('home')}>
              <div className={`relative w-12 h-12 overflow-hidden rounded-full border-2 ${theme.border} ${theme.accentBorder} transition-colors`}>
                 <img 
-                  src="https://i.ibb.co/dstnXYsg/IMG-8537.jpg" 
-                  alt="Vilde"
+                  src={content.images.portrait} 
+                  alt={content.name}
                   className="w-full h-full object-cover"
                 />
              </div>
              <div className="flex flex-col">
-                <span className={`font-bold tracking-tight text-lg leading-none ${theme.textMain}`}>Vilde Brecke</span>
-                <span className={`text-xs font-medium ${theme.primary}`}>Ph.d. i psykologi</span>
+                <span className={`font-bold tracking-tight text-lg leading-none ${theme.textMain}`}>{content.name}</span>
+                <span className={`text-xs font-medium ${theme.primary}`}>{content.tagline}</span>
              </div>
           </div>
 
@@ -185,8 +186,8 @@ const App = () => {
           >
             <div className="h-56 w-full relative bg-stone-100 shrink-0">
                <img 
-                 src="https://i.ibb.co/whVp9Th4/IMG-8539.jpg" 
-                 alt="Vilde Dog" 
+                 src={content.images.action} 
+                 alt="Vilde Action" 
                  className="w-full h-full object-cover"
                />
             </div>

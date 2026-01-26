@@ -62,6 +62,10 @@ export interface PortfolioContent {
   services: string[]; 
   email: string;
   socials: LinkItem[];
+  images: {
+    portrait: string;
+    action: string;
+  };
 }
 
 export interface SearchResult {
