@@ -1,28 +1,27 @@
+# psykologistudent.no
 
-# psykologistudent.no (Vilde Brecke)
+Her er kjeldekoden til nettsida di. Me har bygd ho med React og Vite.
 
-Dette er kildekoden til din personlige porteføljeside. Siden er bygget med React og Vite.
+## Endra innhald
 
-## Redigering av innhold
+Alt innhald ligg i mappa `content/`. Du treng ikkje kunna programmering for å gjera endringar her.
 
-Alt innhold på siden ligger i mappen `content/`. Du trenger ikke kunne programmering for å endre teksten her. Filene er `.tsx` (TypeScript), men fungerer som enkle oppskrifter.
-
-### Mappestruktur i `content/`
+### Mappestruktur
 
 ```
 content/
-├── hjem.tsx           # Forsiden (Hei student, intro)
-├── om-meg.tsx         # Om meg teksten
-├── kontakt.tsx        # E-post og sosiale lenker
-├── site.tsx           # Navn, bilder, og fargetema
-├── cv.tsx             # Utdanning, erfaring, ferdigheter
-├── forskning.tsx      # Publikasjoner
-└── tjenester.tsx      # Tjenesteliste
+├── hjem.tsx           # Forsida
+├── om-meg.tsx         # Om meg
+├── kontakt.tsx        # E-post og lenker
+├── site.tsx           # Namn, bilete og fargar
+├── cv.tsx             # Utdanning og erfaring
+├── forskning.tsx      # Publikasjonar
+└── tjenester.tsx      # Tenester
 ```
 
-### Hvordan endre tekst (Eksempel: `hjem.tsx`)
+### Korleis endra tekst? (t.d. `hjem.tsx`)
 
-Når du åpner `content/hjem.tsx` ser du noe slikt:
+Når du opnar fila ser du noko slikt:
 
 ```tsx
 export const WelcomeText = () => (
@@ -34,32 +33,31 @@ export const WelcomeText = () => (
 );
 ```
 
-*   Skriv vanlig tekst mellom `<>` og `</>`.
-*   Bruk `<br />` for å lage linjeskift.
-*   Bruk `<strong>Tekst</strong>` for å gjøre tekst fet.
-*   Bruk `<em>Tekst</em>` for kursiv.
+*   Skriv teksten din mellom `<>` og `</>`.
+*   Bruk `<br />` for å laga linjeskift.
+*   Bruk `<strong>Tekst</strong>` for å få **feit skrift**.
 
-### Hvordan endre CV og Erfaring (`cv.tsx`)
+### Korleis endra CV? (`cv.tsx`)
 
-Her ligger data i lister. For å legge til en ny erfaring, kopier en blokk mellom `{ ... }` og lim den inn.
+Her ligg data i lister. For å leggja til ein ny jobb, kopierer du berre ei blokk mellom `{ ... }` og limer ho inn.
 
 ```tsx
 export const EXPERIENCE: ExperienceItem[] = [
   {
     role: "Ny Tittel",
-    company: "Nytt Sted",
-    description: "Hva gjorde du her?"
+    company: "Ny Stad",
+    description: "Kva gjorde du her?"
   },
-  // ... andre jobber
+  // ... andre jobbar
 ];
 ```
 
-### Kjøre lokalt
+### Køyra lokalt
 
-Hvis du vil teste endringene på din egen PC:
+Om du vil testa endringane på di eiga maskin:
 
 1.  Installer [Node.js](https://nodejs.org/)
-2.  Åpne terminalen i denne mappen.
-3.  Kjør `npm install`
-4.  Kjør `npm run dev`
-5.  Gå til lenken som vises (vanligvis `http://localhost:5173`).
+2.  Opna terminalen i denne mappa.
+3.  Køyr `npm install`
+4.  Køyr `npm run dev`
+5.  Gå til lenkja som kjem opp (oftast `http://localhost:5173`).
