@@ -24,7 +24,7 @@ export default function Forskning() {
            
            {PUBLICATIONS.map((pub, i) => (
                <a href={pub.url} target="_blank" key={i} className="relative pl-10 flex flex-col group cursor-pointer">
-                   <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-sm">
+                   <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center z-10 group-hover:scale-110 transition-transform">
                       <FileText size={12} className="text-orange-700" />
                    </div>
 

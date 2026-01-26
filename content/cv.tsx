@@ -86,7 +86,7 @@ export default function CV() {
          <ul className="space-y-0 relative border-l border-stone-200 ml-3">
           {TIMELINE.map((item, idx) => (
             <li key={idx} className="relative pl-8 pb-8 last:pb-0 group">
-              <div className={`absolute -left-[5px] top-1.5 w-[11px] h-[11px] rounded-full border-2 border-white shadow-sm z-10 transition-colors
+              <div className={`absolute -left-[5px] top-1.5 w-[11px] h-[11px] rounded-full border-2 border-white z-10 transition-colors
                   ${item.type === 'edu' ? 'bg-stone-700 group-hover:bg-stone-900' : 'bg-orange-500 group-hover:bg-orange-600'}`}>
               </div>
               

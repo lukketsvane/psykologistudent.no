@@ -65,7 +65,7 @@ const App = () => {
 
         {/* Mobile Nav Overlay */}
         {isMenuOpen && (
-           <div className={`md:hidden absolute top-20 left-0 w-full ${THEME.background} border-b ${THEME.border} p-4 shadow-xl flex flex-col gap-2 z-40 animate-in slide-in-from-top-2 duration-200`}>
+           <div className={`md:hidden absolute top-20 left-0 w-full ${THEME.background} border-b ${THEME.border} p-4 flex flex-col gap-2 z-40 animate-in slide-in-from-top-2 duration-200`}>
               {['Hjem', 'Om meg', 'Forskning', 'Kontakt'].map((item, i) => {
                const map: Record<string, string> = { 'Hjem': 'home', 'Om meg': 'about', 'Forskning': 'research', 'Kontakt': 'contact' };
                return (
@@ -105,7 +105,7 @@ const App = () => {
              2026 © {SITE.name}
            </div>
            <div className="flex gap-6">
-             <span className="opacity-50 font-bold">NORGE</span>
+             <span className="opacity-50 fon ok t-bold">NORGE</span>
            </div>
         </footer>
       </main>

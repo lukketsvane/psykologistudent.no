@@ -22,14 +22,14 @@ export const SECTIONS: SectionConfig[] = [
   {
     id: 'about',
     component: <OmMeg />,
-    colSpan: 1,
+    colSpan: 2, // Widened to balance the top row
     rowSpan: 1,
     className: 'overflow-hidden !p-0'
   },
   {
     id: 'contact',
     component: <Kontakt />,
-    colSpan: 1,
+    colSpan: 4, // Full width to prevent "tall and thin" look
     rowSpan: 1,
     className: '!bg-orange-600 text-white !p-0 overflow-hidden border-transparent'
   },
