@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { ThemeConfig } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const SOURCE_IMAGES = [
   "https://i.ibb.co/dstnXYsg/IMG-8537.jpg", // Portrait
   "https://i.ibb.co/whVp9Th4/IMG-8539.jpg"  // Dog/Grass
@@ -32,6 +30,26 @@ const fetchImageAsBase64 = async (url: string): Promise<string | null> => {
 export const remixVisuals = async (
   onUpdate: (theme: ThemeConfig) => void
 ): Promise<void> => {
+
+  // Initialize AI client lazily to avoid 'process is not defined' errors on app load
+  // Safely check for process presence for browser compatibility
+  let apiKey = '';
+  try {
+      // @ts-ignore
+      if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+          // @ts-ignore
+          apiKey = process.env.API_KEY;
+      }
+  } catch (e) {
+      console.warn("Could not read API_KEY from process.env");
+  }
+
+  if (!apiKey) {
+      console.warn("API Key is missing. Skipping AI generation.");
+      return;
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
 
   // 1. Pick a random source image
   const randomImage = SOURCE_IMAGES[Math.floor(Math.random() * SOURCE_IMAGES.length)];
@@ -88,22 +106,26 @@ export const remixVisuals = async (
   }
 
   // 3. Call Gemini
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview', 
-    contents: contents,
-    config: {
-      responseMimeType: "application/json"
-    }
-  });
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview', 
+      contents: contents,
+      config: {
+        responseMimeType: "application/json"
+      }
+    });
 
-  // 4. Parse and update
-  const text = response.text;
-  if (text) {
-    try {
-      const theme = JSON.parse(text);
-      onUpdate(theme);
-    } catch (e) {
-      console.error("Failed to parse theme JSON", e);
+    // 4. Parse and update
+    const text = response.text;
+    if (text) {
+      try {
+        const theme = JSON.parse(text);
+        onUpdate(theme);
+      } catch (e) {
+        console.error("Failed to parse theme JSON", e);
+      }
     }
+  } catch (error) {
+    console.error("Gemini API Error", error);
   }
 };
