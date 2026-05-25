@@ -1,4 +1,11 @@
 ---
+# SLIK REDIGERER DU TRYGT:
+# - Endre berre teksten mellom hermeteikna: "slik tekst".
+# - Ikkje endre feltnamn som `title:`, `description:`, `url:` eller innrykka mellomrom.
+# - Lenker må starte med `https://`.
+# - Lister brukar bindestrek. Kopier eit eksisterande punkt om du vil leggje til noko nytt.
+# - Feit tekst kan skrivast slik: **viktig tekst**.
+
 site:
   name: "Vilde Brecke"
   tagline: "Ph.d. i psykologi | Veileder"
