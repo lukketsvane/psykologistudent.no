@@ -31,7 +31,6 @@ navigation:
   contact: "Kontakt"
 
 home:
-  eyebrow: "👋 Hei psykologistudent!"
   title: "Veiledning og mestring i psykologifaget"
   description: "Sliter du med metodedelen? Jeg tilbyr **skreddersydd undervisning** i statistikk og oppgaveskriving for å sikre toppkarakteren."
   credentialTitle: "Faglig trygghet"
@@ -104,7 +103,7 @@ cv:
 
 research:
   heading: "Forskning"
-  label: "Utvalgt"
+  label: "Utvalde publikasjonar"
   linkLabel: "Se ResearchGate"
   linkUrl: "https://researchgate.net"
   publications:
@@ -120,10 +119,6 @@ research:
       journal: "Frontiers in Psychiatry"
       year: "2021"
       url: "https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2021.674020/full"
-
-footer:
-  copyrightYear: "2026"
-  country: "NORGE"
 ---
 
 # Redigering

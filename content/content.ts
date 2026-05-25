@@ -40,7 +40,6 @@ export interface SiteContent {
     contact: string;
   };
   home: {
-    eyebrow: string;
     title: string;
     description: string;
     credentialTitle: string;
@@ -88,10 +87,6 @@ export interface SiteContent {
       year: string;
       url: string;
     }>;
-  };
-  footer: {
-    copyrightYear: string;
-    country: string;
   };
 }
 
@@ -168,7 +163,6 @@ const parseContent = (value: unknown): SiteContent => {
   const contact = requireRecord(content.contact, 'contact');
   const cv = requireRecord(content.cv, 'cv');
   const research = requireRecord(content.research, 'research');
-  const footer = requireRecord(content.footer, 'footer');
 
   return {
     site: {
@@ -206,7 +200,6 @@ const parseContent = (value: unknown): SiteContent => {
       contact: requireString(navigation, 'contact', 'navigation'),
     },
     home: {
-      eyebrow: requireString(home, 'eyebrow', 'home'),
       title: requireString(home, 'title', 'home'),
       description: requireString(home, 'description', 'home'),
       credentialTitle: requireString(home, 'credentialTitle', 'home'),
@@ -263,10 +256,6 @@ const parseContent = (value: unknown): SiteContent => {
           url: requireString(publication, 'url', `research.publications[${index}]`),
         };
       }),
-    },
-    footer: {
-      copyrightYear: requireString(footer, 'copyrightYear', 'footer'),
-      country: requireString(footer, 'country', 'footer'),
     },
   };
 };

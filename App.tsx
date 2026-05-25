@@ -88,10 +88,6 @@ const syncMetadata = () => {
 const HomeSection = () => (
   <div className="flex flex-row items-center gap-8 h-full">
     <div className="flex-1 space-y-4 relative z-10">
-      <span className="inline-block px-3 py-1 bg-white/10 border border-white/20 rounded-full text-[10px] font-bold tracking-wider uppercase opacity-90">
-        {CONTENT.home.eyebrow}
-      </span>
-
       <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight leading-[1.1] text-balance">
         {CONTENT.home.title}
       </h1>
@@ -263,7 +259,6 @@ const CvSection = () => (
                 <span className="text-xs font-mono font-medium text-stone-400 bg-stone-50 px-2 py-0.5 rounded">{item.year}</span>
               </div>
               <div className="flex items-center gap-2 mb-2">
-                {item.type === 'edu' && <GraduationCap size={12} className="text-stone-400" />}
                 <span className="text-xs font-bold text-orange-700 uppercase tracking-wide">{item.company}</span>
               </div>
               <p className="text-sm text-stone-600 leading-relaxed opacity-90 max-w-xl">
@@ -432,16 +427,6 @@ const App = () => {
         </BentoGrid>
 
         <NeuroDecorations />
-
-        <footer className={`max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-6 text-sm font-medium ${THEME.textSecondary} opacity-60`}>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            {CONTENT.footer.copyrightYear} © {CONTENT.site.name}
-          </div>
-          <div className="flex gap-6">
-            <span className="opacity-50">{CONTENT.footer.country}</span>
-          </div>
-        </footer>
       </main>
     </div>
   );
