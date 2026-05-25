@@ -11,8 +11,8 @@ export const PixelGame = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const CTX_WIDTH = 160;
     const CTX_HEIGHT = 80;
+    let CTX_WIDTH = 160;
 
     canvas.width = CTX_WIDTH;
     canvas.height = CTX_HEIGHT;
@@ -20,6 +20,19 @@ export const PixelGame = () => {
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
+
+    const resizeCanvas = () => {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+
+        const nextWidth = Math.max(160, Math.round((rect.width / rect.height) * CTX_HEIGHT));
+        if (nextWidth === CTX_WIDTH) return;
+
+        CTX_WIDTH = nextWidth;
+        canvas.width = CTX_WIDTH;
+        canvas.height = CTX_HEIGHT;
+        ctx.imageSmoothingEnabled = false;
+    };
 
     const WORLD_WIDTH = 1400;
     const GROUND_Y = 68;
@@ -483,6 +496,7 @@ export const PixelGame = () => {
 
     const render = () => {
         if (!canvasRef.current) return;
+        resizeCanvas();
 
         if (touchOrigin.current !== null && touchCurrent.current !== null) {
             const delta = touchCurrent.current - touchOrigin.current;
@@ -630,7 +644,7 @@ export const PixelGame = () => {
     <div className="w-full h-[160px] mb-4 rounded-t-2xl bg-stone-100 relative overflow-hidden select-none cursor-pointer active:cursor-grabbing border-b-4 border-stone-200 group">
         <canvas
             ref={canvasRef}
-            className="w-full h-full object-cover touch-none"
+            className="w-full h-full touch-none"
             style={{ imageRendering: 'pixelated' }}
         />
     </div>

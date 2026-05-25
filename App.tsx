@@ -297,7 +297,7 @@ const ResearchSection = () => (
           </div>
 
           <div className="bg-stone-50 group-hover:bg-orange-50/50 rounded-r-xl rounded-bl-xl p-4 transition-colors">
-            <h4 className="text-sm font-bold text-stone-900 leading-snug group-hover:text-orange-900">
+            <h4 className="text-sm font-bold text-stone-900 leading-snug group-hover:text-orange-900 whitespace-normal break-words">
               {publication.title}
             </h4>
             <div className="flex items-center gap-2 mt-2">
