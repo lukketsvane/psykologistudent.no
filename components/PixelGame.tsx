@@ -1,73 +1,63 @@
-
 import React, { useRef, useEffect } from 'react';
 
 export const PixelGame = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
-  // Refs for inputs
+
   const touchOrigin = useRef<number | null>(null);
   const touchCurrent = useRef<number | null>(null);
-  const startX = useRef<number | null>(null); // To detect taps vs drags
+  const startX = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const CTX_WIDTH = 160;
     const CTX_HEIGHT = 80;
-    
+
     canvas.width = CTX_WIDTH;
     canvas.height = CTX_HEIGHT;
 
-    const ctx = canvas.getContext('2d', { alpha: false }); 
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
-    ctx.imageSmoothingEnabled = false; 
+    ctx.imageSmoothingEnabled = false;
 
-    // --- GAME CONSTANTS ---
-    const WORLD_WIDTH = 1400; 
-    const GROUND_Y = 68; 
-    
-    // Physics & Camera
-    let playerX = 50; 
-    let playerY = GROUND_Y - 8; 
+    const WORLD_WIDTH = 1400;
+    const GROUND_Y = 68;
+
+    let playerX = 50;
+    let playerY = GROUND_Y - 8;
     let playerVY = 0;
-    const GRAVITY = 0.3;     // Snappy gravity
-    const JUMP_FORCE = -2.6; // Subtle, low jump
+    const GRAVITY = 0.3;
+    const JUMP_FORCE = -2.6;
     let isGrounded = true;
 
     let cameraX = 0;
     let frame = 0;
-    let direction = 1; 
+    let direction = 1;
     let speed = 0;
-    
-    // --- ASSETS GENERATION ---
-    
-    // 1. Mountains (Blocky / Pixelated)
+
     const mountainsBack: number[] = [];
     const mountainsFront: number[] = [];
     const ulrikenProfile = [10, 9, 8, 7, 6, 6, 5, 5, 4, 5, 6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6, 5, 4, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    
-    // Distinct block heights for background
+
     const backBlockHeights = [20, 24, 28, 32, 36, 40, 36, 32, 28, 24, 20, 16, 20, 24, 28, 35, 42, 35, 28];
 
     for(let i=0; i<WORLD_WIDTH; i++) {
-        // Back Layer: Stepped blocks
-        const blockStep = 30; 
+
+        const blockStep = 30;
         const idx = Math.floor(i / blockStep) % backBlockHeights.length;
         const macroVariation = Math.floor(i / 200) % 2 === 0 ? 0 : 5;
-        const backH = backBlockHeights[idx] + macroVariation; 
+        const backH = backBlockHeights[idx] + macroVariation;
         mountainsBack.push(CTX_HEIGHT - backH);
 
-        // Front Layer (Ulriken - Jagged)
         const profileIndex = Math.floor(i / 8) % ulrikenProfile.length;
         const noise = Math.floor(Math.random() * 2);
-        const baseH = ulrikenProfile[profileIndex] * 1.8 + 12; 
+        const baseH = ulrikenProfile[profileIndex] * 1.8 + 12;
         mountainsFront.push(CTX_HEIGHT - baseH + noise);
     }
 
-    // 2. Clouds
     const clouds: {x: number, y: number, w: number, h: number, speed: number}[] = [];
-    for(let i=0; i<8; i++) { 
+    for(let i=0; i<8; i++) {
         clouds.push({
             x: Math.random() * WORLD_WIDTH,
             y: Math.random() * 25 + 2,
@@ -77,7 +67,6 @@ export const PixelGame = () => {
         });
     }
 
-    // 3. Pigeons
     interface Pigeon {
         x: number;
         y: number;
@@ -96,15 +85,14 @@ export const PixelGame = () => {
             vx: 0,
             vy: 0,
             frameOffset: Math.floor(Math.random() * 10),
-            color: Math.random() > 0.5 ? '#a8a29e' : '#78716c' // Stone-400 or Stone-500
+            color: Math.random() > 0.5 ? '#a8a29e' : '#78716c'
         });
     }
 
-    // 4. Rain Zones (Bergensregn)
     const RAIN_ZONE_START = 250;
     const RAIN_ZONE_END = 670;
     const rain: {x: number, y: number, speed: number}[] = [];
-    for(let i=0; i<80; i++) { 
+    for(let i=0; i<80; i++) {
         rain.push({
             x: RAIN_ZONE_START + Math.random() * (RAIN_ZONE_END - RAIN_ZONE_START),
             y: Math.random() * CTX_HEIGHT,
@@ -112,18 +100,16 @@ export const PixelGame = () => {
         });
     }
 
-    // 5. Decor & Landmarks
     type DecorType = 'grass'|'tree'|'lamp'|'flower'|'grass_tuft'|'house_white'|'house_red'|'house_yellow';
     const decor: {x: number, type: DecorType, color?: string}[] = [];
-    
-    // Zones
+
     const blueStoneX = 100;
     const bryggenStart = 280;
-    const bryggenWidth = 260; 
+    const bryggenWidth = 260;
     const floiX = 650;
     const parkStart = 720;
     const parkEnd = 920;
-    const haukelandX = 1050; 
+    const haukelandX = 1050;
     const churchX = 1300;
 
     const isZoneClear = (x: number) => {
@@ -135,18 +121,17 @@ export const PixelGame = () => {
         return true;
     };
 
-    // Populate World
-    for(let i=0; i<WORLD_WIDTH; i+= Math.random() * 8 + 2) { 
+    for(let i=0; i<WORLD_WIDTH; i+= Math.random() * 8 + 2) {
         if (i > parkStart && i < parkEnd) {
              const r = Math.random();
              if (r > 0.3) {
                  decor.push({ x: i, type: 'grass_tuft' });
              } else if (r > 0.1) {
                  const flowerCols = ['#facc15', '#f472b6', '#a78bfa', '#ffffff'];
-                 decor.push({ 
-                     x: i, 
-                     type: 'flower', 
-                     color: flowerCols[Math.floor(Math.random()*flowerCols.length)] 
+                 decor.push({
+                     x: i,
+                     type: 'flower',
+                     color: flowerCols[Math.floor(Math.random()*flowerCols.length)]
                  });
              }
              if (i % 30 === 0 && Math.random() > 0.5) {
@@ -158,12 +143,11 @@ export const PixelGame = () => {
         if (!isZoneClear(i)) continue;
 
         const r = Math.random();
-        
-        // Urban/Rural logic
-        if (i % 20 === 0 && r > 0.3) { 
+
+        if (i % 20 === 0 && r > 0.3) {
             const houseTypes: DecorType[] = ['house_white', 'house_red', 'house_yellow'];
             decor.push({ x: i, type: houseTypes[Math.floor(Math.random()*3)] });
-            i+=14; // Space for house
+            i+=14;
         }
         else if (i % 25 === 0 && r > 0.8) {
              decor.push({ x: i, type: 'lamp' });
@@ -176,7 +160,6 @@ export const PixelGame = () => {
         }
     }
 
-    // --- INPUTS ---
     const handleJump = () => {
         if (isGrounded) {
             playerVY = JUMP_FORCE;
@@ -185,7 +168,7 @@ export const PixelGame = () => {
     };
 
     const handleTouchStart = (e: TouchEvent) => {
-        e.preventDefault(); 
+        e.preventDefault();
         touchOrigin.current = e.touches[0].clientX;
         touchCurrent.current = e.touches[0].clientX;
         startX.current = e.touches[0].clientX;
@@ -200,12 +183,12 @@ export const PixelGame = () => {
         e.preventDefault();
         if (startX.current !== null && touchCurrent.current !== null) {
             const dist = Math.abs(touchCurrent.current - startX.current);
-            // If movement is very small (< 10px), treat as tap -> Jump
+
             if (dist < 10) {
                 handleJump();
             }
         } else {
-             // If no move event fired, it's a tap
+
              handleJump();
         }
         touchOrigin.current = null;
@@ -218,7 +201,7 @@ export const PixelGame = () => {
         touchCurrent.current = e.clientX;
         startX.current = e.clientX;
     };
-    
+
     const handleMouseMove = (e: MouseEvent) => {
         if (touchOrigin.current !== null) touchCurrent.current = e.clientX;
     };
@@ -240,7 +223,6 @@ export const PixelGame = () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
 
-    // --- DRAWING HELPERS ---
     const drawRect = (color: string, x: number, y: number, w: number, h: number) => {
         ctx.fillStyle = color;
         ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(w), Math.floor(h));
@@ -249,8 +231,6 @@ export const PixelGame = () => {
     const drawPixel = (color: string, x: number, y: number) => {
         drawRect(color, x, y, 1, 1);
     };
-
-    // --- ASSET DRAWING ---
 
     const drawBlueStone = (offsetX: number, camX: number) => {
         const x = blueStoneX + offsetX - camX;
@@ -262,7 +242,7 @@ export const PixelGame = () => {
         drawRect('#2980b9', x + 4, y - 9, 2, 9);
         drawRect('#5dade2', x - 3, y - 11, 8, 1);
         drawRect('#333', x + 8, y - 6, 2, 6);
-        drawRect('#ecf0f1', x + 8, y - 8, 2, 2); 
+        drawRect('#ecf0f1', x + 8, y - 8, 2, 2);
     };
 
     const drawFløibanen = (offsetX: number, camX: number) => {
@@ -270,23 +250,23 @@ export const PixelGame = () => {
         const y = GROUND_Y;
         if (x < -50 || x > CTX_WIDTH + 50) return;
 
-        drawRect('#5d4037', x - 5, y - 8, 12, 8); 
-        drawRect('#3e2723', x - 2, y - 6, 4, 6); 
-        drawRect('#fff', x - 8, y - 12, 18, 4); 
-        drawRect('#8d6e63', x - 7, y - 11, 16, 1); 
+        drawRect('#5d4037', x - 5, y - 8, 12, 8);
+        drawRect('#3e2723', x - 2, y - 6, 4, 6);
+        drawRect('#fff', x - 8, y - 12, 18, 4);
+        drawRect('#8d6e63', x - 7, y - 11, 16, 1);
 
         for(let i=0; i<60; i++) {
-            drawPixel('#555', x + i + 2, y - i - 8); 
+            drawPixel('#555', x + i + 2, y - i - 8);
             if(i%5===0) drawRect('#3e2723', x + i + 2, y - i - 7, 1, 10);
         }
 
-        const carAnim = (Math.floor(frame / 1.5) % 100); 
-        const carPos = carAnim < 50 ? carAnim : 100 - carAnim; 
-        const trackProgress = Math.min(carPos, 55); 
+        const carAnim = (Math.floor(frame / 1.5) % 100);
+        const carPos = carAnim < 50 ? carAnim : 100 - carAnim;
+        const trackProgress = Math.min(carPos, 55);
         const cx = x + trackProgress + 2;
-        const cy = y - trackProgress - 14; 
+        const cy = y - trackProgress - 14;
 
-        drawRect('#c0392b', cx, cy, 10, 6); 
+        drawRect('#c0392b', cx, cy, 10, 6);
         drawRect('#87ceeb', cx+2, cy+1, 2, 2);
         drawRect('#87ceeb', cx+6, cy+1, 2, 2);
         drawRect('#222', cx+1, cy+6, 2, 1);
@@ -303,7 +283,7 @@ export const PixelGame = () => {
         drawRect('#e74c3c', x - 1, GROUND_Y - 34, 3, 1);
         drawPixel('#e74c3c', x, GROUND_Y - 35);
         drawPixel('#e74c3c', x, GROUND_Y - 33);
-        
+
         for(let wy=GROUND_Y - 26; wy < GROUND_Y - 4; wy+=3) {
             for(let wx=x-10; wx < x+10; wx+=3) {
                 drawPixel('#2c3e50', wx, wy);
@@ -314,17 +294,17 @@ export const PixelGame = () => {
         drawRect('#7f8c8d', x - 20, GROUND_Y - 8, 1, 8);
         drawRect('#2980b9', x - 22, GROUND_Y - 12, 5, 4);
         drawRect('#fff', x - 21, GROUND_Y - 11, 3, 2);
-        drawPixel('#2980b9', x - 20, GROUND_Y - 11); 
+        drawPixel('#2980b9', x - 20, GROUND_Y - 11);
         drawPixel('#2980b9', x - 20, GROUND_Y - 10);
 
         const sx = x + 20;
-        drawRect('#ecf0f1', sx, GROUND_Y - 8, 3, 8); 
-        drawRect('#34495e', sx, GROUND_Y - 2, 1, 2); 
-        drawRect('#34495e', sx+2, GROUND_Y - 2, 1, 2); 
-        drawRect('#ffdbac', sx, GROUND_Y - 10, 3, 2); 
-        
+        drawRect('#ecf0f1', sx, GROUND_Y - 8, 3, 8);
+        drawRect('#34495e', sx, GROUND_Y - 2, 1, 2);
+        drawRect('#34495e', sx+2, GROUND_Y - 2, 1, 2);
+        drawRect('#ffdbac', sx, GROUND_Y - 10, 3, 2);
+
         const lx = x + 30;
-        drawRect('#7f8c8d', lx, GROUND_Y - 4, 6, 1); 
+        drawRect('#7f8c8d', lx, GROUND_Y - 4, 6, 1);
         drawRect('#7f8c8d', lx, GROUND_Y - 3, 1, 3);
         drawRect('#7f8c8d', lx+5, GROUND_Y - 3, 1, 3);
         drawRect('#e74c3c', lx+3, GROUND_Y - 6, 2, 2);
@@ -372,11 +352,11 @@ export const PixelGame = () => {
              const sway = Math.floor(Math.sin((frame + d.x) * 0.1) * 1.5);
              drawRect('#4d7c0f', x, GROUND_Y - 4, 1, 4);
              drawRect(d.color!, x - 1 + sway, GROUND_Y - 5, 3, 2);
-             drawRect('#ffffff', x + sway, GROUND_Y - 5, 1, 1); 
+             drawRect('#ffffff', x + sway, GROUND_Y - 5, 1, 1);
         } else if (d.type === 'tree') {
-            drawRect('#451a03', x, GROUND_Y - 6, 2, 6); 
-            drawRect('#14532d', x - 4, GROUND_Y - 20, 10, 14); 
-            drawRect('#15803d', x - 3, GROUND_Y - 18, 8, 5); 
+            drawRect('#451a03', x, GROUND_Y - 6, 2, 6);
+            drawRect('#14532d', x - 4, GROUND_Y - 20, 10, 14);
+            drawRect('#15803d', x - 3, GROUND_Y - 18, 8, 5);
         } else if (d.type === 'lamp') {
             drawRect('#1c1917', x, GROUND_Y - 18, 1, 18);
             drawRect('#fef08a', x - 1, GROUND_Y - 19, 3, 3);
@@ -386,9 +366,9 @@ export const PixelGame = () => {
     const drawJohanneskirken = (offsetX: number, camX: number) => {
         const x = churchX + offsetX - camX;
         if (x < -50 || x > CTX_WIDTH + 50) return;
-        
-        const baseC = '#b91c1c'; 
-        const roofC = '#0f766e'; 
+
+        const baseC = '#b91c1c';
+        const roofC = '#0f766e';
         drawRect(baseC, x - 20, GROUND_Y - 30, 40, 30);
         drawRect(roofC, x - 22, GROUND_Y - 38, 44, 8);
         drawRect(baseC, x - 8, GROUND_Y - 55, 16, 25);
@@ -447,18 +427,18 @@ export const PixelGame = () => {
         drawRect(fur, x, y + bob, 10, 5);
         drawRect(fur, x + 7, y - 4 + bob, 5, 5);
         drawRect('#78350f', x + 8, y - 3 + bob, 2, 3);
-        
+
         const legFrame = Math.floor(frame / 5) % 2;
         if (!isGrounded) {
-             drawRect(fur, x + 1, y + 4 + bob, 2, 3); 
-             drawRect(fur, x + 8, y + 6 + bob, 2, 3); 
+             drawRect(fur, x + 1, y + 4 + bob, 2, 3);
+             drawRect(fur, x + 8, y + 6 + bob, 2, 3);
         } else if (isMoving) {
             if (legFrame === 0) {
-                drawRect(fur, x + 1, y + 5 + bob, 2, 3); 
-                drawRect(fur, x + 7, y + 5 + bob, 2, 3); 
+                drawRect(fur, x + 1, y + 5 + bob, 2, 3);
+                drawRect(fur, x + 7, y + 5 + bob, 2, 3);
             } else {
-                drawRect(fur, x + 2, y + 5 + bob, 2, 3); 
-                drawRect(fur, x + 6, y + 5 + bob, 2, 3); 
+                drawRect(fur, x + 2, y + 5 + bob, 2, 3);
+                drawRect(fur, x + 6, y + 5 + bob, 2, 3);
             }
         } else {
             drawRect(fur, x + 1, y + 5 + bob, 2, 3);
@@ -473,41 +453,37 @@ export const PixelGame = () => {
         const py = p.y;
         if (px < -10 || px > CTX_WIDTH + 10) return;
 
-        // Visuals
         const color = p.color;
-        
+
         if (p.state === 'idle') {
-            // Pecking anim
+
             const peck = Math.floor(frame / 10 + p.frameOffset) % 4 === 0;
-            drawRect(color, px, py - 3, 3, 3); // Body
+            drawRect(color, px, py - 3, 3, 3);
             if (peck) {
-                drawRect('#d6d3d1', px + 2, py - 1, 2, 1); // Head down
+                drawRect('#d6d3d1', px + 2, py - 1, 2, 1);
             } else {
-                drawRect('#d6d3d1', px + 2, py - 4, 2, 1); // Head up
+                drawRect('#d6d3d1', px + 2, py - 4, 2, 1);
             }
         } else {
-            // Flying anim
+
             const flap = Math.floor(frame / 3) % 2 === 0;
-            drawRect(color, px, py - 3, 3, 2); // Body
+            drawRect(color, px, py - 3, 3, 2);
             if (flap) {
-                // Wings Up
-                drawRect('#e7e5e4', px - 2, py - 5, 2, 3); 
+
+                drawRect('#e7e5e4', px - 2, py - 5, 2, 3);
                 drawRect('#e7e5e4', px + 3, py - 5, 2, 3);
             } else {
-                // Wings Down
+
                 drawRect('#e7e5e4', px - 2, py - 1, 2, 2);
                 drawRect('#e7e5e4', px + 3, py - 1, 2, 2);
             }
-            drawRect('#d6d3d1', px + 2, py - 4, 2, 1); // Head
+            drawRect('#d6d3d1', px + 2, py - 4, 2, 1);
         }
     };
 
-    // --- MAIN LOOP ---
     const render = () => {
         if (!canvasRef.current) return;
 
-        // --- PHYSICS ---
-        // X Movement (Touch Drag)
         if (touchOrigin.current !== null && touchCurrent.current !== null) {
             const delta = touchCurrent.current - touchOrigin.current;
             if (Math.abs(delta) > 5) {
@@ -517,12 +493,10 @@ export const PixelGame = () => {
         } else { speed = 0; }
 
         if (speed > 0) playerX += speed * direction;
-        
-        // Wrap World
+
         if (playerX > WORLD_WIDTH) playerX = 0;
         if (playerX < 0) playerX = WORLD_WIDTH;
-        
-        // Y Movement (Gravity/Jump)
+
         playerVY += GRAVITY;
         playerY += playerVY;
 
@@ -532,27 +506,25 @@ export const PixelGame = () => {
             isGrounded = true;
         }
 
-        cameraX = playerX - CTX_WIDTH / 2 + 5; 
+        cameraX = playerX - CTX_WIDTH / 2 + 5;
 
-        // Update Pigeons
         pigeons.forEach(p => {
             if (p.state === 'idle') {
                 const dist = Math.abs(p.x - playerX);
-                // Scare distance check (handling world wrap loosely)
+
                 if (dist < 40 || Math.abs(p.x - (playerX + WORLD_WIDTH)) < 40 || Math.abs(p.x - (playerX - WORLD_WIDTH)) < 40) {
                     p.state = 'flying';
-                    // Fly away from player
+
                     const dir = p.x > playerX ? 1 : -1;
                     p.vx = dir * (1 + Math.random());
                     p.vy = -1.5 - Math.random();
                 }
             } else {
-                // Fly logic
+
                 p.x += p.vx;
                 p.y += p.vy;
-                p.vy -= 0.05; // Acceleration up
-                
-                // Reset if flown too high
+                p.vy -= 0.05;
+
                 if (p.y < -50) {
                     p.state = 'idle';
                     p.y = GROUND_Y;
@@ -563,17 +535,13 @@ export const PixelGame = () => {
             }
         });
 
-        // --- DRAWING ---
-
-        // 1. SKY
         const grd = ctx.createLinearGradient(0,0,0,CTX_HEIGHT);
-        grd.addColorStop(0, '#7dd3fc'); 
+        grd.addColorStop(0, '#7dd3fc');
         grd.addColorStop(1, '#bae6fd');
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, CTX_WIDTH, CTX_HEIGHT);
 
-        // 2. MOUNTAINS BACK
-        ctx.fillStyle = '#94a3b8'; 
+        ctx.fillStyle = '#94a3b8';
         for(let i=0; i < CTX_WIDTH + 10; i++) {
             let wx = Math.floor(cameraX * 0.1 + i);
             while(wx < 0) wx += WORLD_WIDTH;
@@ -582,8 +550,7 @@ export const PixelGame = () => {
             ctx.fillRect(i, h, 1, CTX_HEIGHT - h);
         }
 
-        // 3. MOUNTAINS FRONT
-        ctx.fillStyle = '#34495e'; 
+        ctx.fillStyle = '#34495e';
         for(let i=0; i < CTX_WIDTH + 10; i++) {
             let wx = Math.floor(cameraX * 0.2 + i);
             while(wx < 0) wx += WORLD_WIDTH;
@@ -593,25 +560,23 @@ export const PixelGame = () => {
             if (h < CTX_HEIGHT - 60) {
                  ctx.fillStyle = '#ecf0f1';
                  ctx.fillRect(i, h, 1, 2);
-                 ctx.fillStyle = '#34495e'; 
+                 ctx.fillStyle = '#34495e';
             }
         }
 
-        // 4. CLOUDS
         ctx.fillStyle = 'rgba(255,255,255,0.8)';
         clouds.forEach(c => {
             c.x -= c.speed;
             if (c.x < -c.w) c.x = WORLD_WIDTH;
-            const sx = Math.floor(c.x - cameraX * 0.1); 
+            const sx = Math.floor(c.x - cameraX * 0.1);
             const renderC = (ox: number) => {
                  const x = sx + ox;
                  if (x + c.w > 0 && x < CTX_WIDTH) ctx.fillRect(x, c.y, c.w, c.h);
             };
             renderC(0);
-            renderC(WORLD_WIDTH * 5); 
+            renderC(WORLD_WIDTH * 5);
         });
 
-        // 5. LANDMARKS
         [0, WORLD_WIDTH, -WORLD_WIDTH].forEach(offset => {
              drawJohanneskirken(offset, cameraX);
              drawBryggen(offset, cameraX);
@@ -621,20 +586,16 @@ export const PixelGame = () => {
              drawFløibanen(offset, cameraX);
         });
 
-        // 6. GROUND
         drawRect('#57534e', 0, GROUND_Y, CTX_WIDTH, CTX_HEIGHT - GROUND_Y);
         drawRect('#78716c', 0, GROUND_Y, CTX_WIDTH, 1);
 
-        // 7. DECOR & PIGEONS
         [0, WORLD_WIDTH, -WORLD_WIDTH].forEach(offset => {
             decor.forEach(d => renderDecor(d, offset, cameraX));
             pigeons.forEach(p => drawPigeon(p, offset, cameraX));
         });
 
-        // 8. DOG
         drawDog(playerX - cameraX, playerY, direction, speed > 0.1);
 
-        // 9. RAIN
         rain.forEach(r => {
             r.y += r.speed;
             if (r.y > CTX_HEIGHT) {
@@ -667,10 +628,10 @@ export const PixelGame = () => {
 
   return (
     <div className="w-full h-[160px] mb-4 rounded-t-2xl bg-stone-100 relative overflow-hidden select-none cursor-pointer active:cursor-grabbing border-b-4 border-stone-200 group">
-        <canvas 
-            ref={canvasRef} 
+        <canvas
+            ref={canvasRef}
             className="w-full h-full object-cover touch-none"
-            style={{ imageRendering: 'pixelated' }} 
+            style={{ imageRendering: 'pixelated' }}
         />
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface BentoGridProps {
@@ -22,10 +21,10 @@ interface BentoItemProps {
   id?: string;
 }
 
-export const BentoItem: React.FC<BentoItemProps> = ({ 
-  children, 
-  className = "", 
-  colSpan = 1, 
+export const BentoItem: React.FC<BentoItemProps> = ({
+  children,
+  className = "",
+  colSpan = 1,
   rowSpan = 1,
   id
 }) => {
@@ -43,11 +42,11 @@ export const BentoItem: React.FC<BentoItemProps> = ({
   }[rowSpan];
 
   return (
-    <div 
+    <div
       id={id}
       className={`
-        ${colSpanClass} ${rowSpanClass} 
-        bg-white 
+        ${colSpanClass} ${rowSpanClass}
+        bg-white
         rounded-3xl
         border border-stone-200
         p-8 relative group flex flex-col overflow-hidden

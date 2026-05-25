@@ -1,64 +1,87 @@
-
 # psykologistudent.no
 
-## Enklere redigering (MDX-stil)
+## Redigere tekst, lenker og bilder
 
-Me har oppdatert nettsida slik at du kan skriva innhaldet som "levande dokument". 
-Du kan blanda tekst, bilete og spesialkomponentar (som PixelGame) fritt.
+Alt innhold som kunden normalt skal endre ligger i én fil:
 
-### 1. Endra tekst og innhald
-
-Gå til `content/` mappa. Her finn du filer som `hjem.tsx`, `om-meg.tsx` osv.
-Disse filene er nå **React Komponenter**. Det betyr at du skriv HTML/Tekst direkte.
-
-**Døme (hjem.tsx):**
-
-```tsx
-import React from 'react';
-import { Prose } from '../components/Prose';
-
-export default function Hjem() {
-  return (
-    <div>
-       <h1>Tittel her</h1>
-       <p>
-         Dette er eit avsnitt. 
-         Du kan bruka <strong>feit skrift</strong> eller <em>kursiv</em>.
-       </p>
-       
-       {/* Du kan leggja inn komponentar kor som helst! */}
-       <MinSpesialKnapp />
-    </div>
-  );
-}
+```txt
+content/content.md
 ```
 
-### 2. Endra struktur (Legg til/fjern boksar)
+Åpne filen og endre teksten mellom hermetegn. Ikke endre navnene på feltene, for eksempel `title`, `description`, `skills` eller `publications`.
 
-Alt oppsettet ligg i `content/sections.tsx`.
-Dette er ei liste over alle boksane på framsida.
+## Vanlige endringer
 
-For å leggja til ein ny boks:
-1. Lag ei ny fil i `content/`, f.eks `ny-boks.tsx`.
-2. Importer ho i `sections.tsx`.
-3. Legg ho til i lista:
+### Endre hovedtekst
 
-```tsx
-{
-  id: 'ny-boks',
-  component: <NyBoks />,
-  colSpan: 1, // Hvor bred? (1-4)
-  rowSpan: 1, // Hvor høy? (1-3)
-}
+Finn feltet du vil endre:
+
+```yaml
+home:
+  title: "Veiledning og mestring i psykologifaget"
+  description: "Sliter du med metodedelen? Jeg tilbyr **skreddersydd undervisning** ..."
 ```
 
-### 3. Ikoner og Bilder
+Bruk `**tekst**` for fet skrift.
 
-Bilder og hovedinformasjon ligg i `content/site.tsx`.
-Ikoner kan hentast frå `lucide-react` (biblioteket me brukar).
+### Endre bilder
 
----
+```yaml
+site:
+  images:
+    portrait: "https://..."
+    action: "https://..."
+```
 
-**Køyra lokalt:**
-1. `npm install`
-2. `npm run dev`
+`portrait` brukes i menyen. `action` brukes i "Om meg"-boksen.
+
+### Endre lenker
+
+```yaml
+contact:
+  socialLinks:
+    - label: "LinkedIn"
+      url: "https://linkedin.com"
+      icon: "linkedin"
+```
+
+Tilgjengelige ikoner her er `linkedin` og `globe`.
+
+### Legge til CV-punkt
+
+Legg til et nytt punkt under `cv.timeline`:
+
+```yaml
+- role: "Ny rolle"
+  company: "Arbeidssted"
+  year: "2026"
+  description: "Kort beskrivelse."
+  type: "job"
+```
+
+`type` kan være `job` eller `edu`.
+
+### Legge til forskning
+
+Legg til et nytt punkt under `research.publications`:
+
+```yaml
+- title: "Publikasjonstittel"
+  journal: "Tidsskrift"
+  year: "2026"
+  url: "https://..."
+```
+
+## Kjøre lokalt
+
+```bash
+npm install
+npm run dev
+```
+
+## Sjekke før publisering
+
+```bash
+npx tsc --noEmit --pretty false
+npm run build
+```

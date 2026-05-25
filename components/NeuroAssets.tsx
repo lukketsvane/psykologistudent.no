@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 
-// Helper class for drawing pixels on canvas
 class PixelDrawer {
     ctx: CanvasRenderingContext2D | null;
     pixelSize: number;
@@ -44,8 +43,7 @@ export const NeuroDecorations: React.FC = () => {
 
     useEffect(() => {
         const scale = 4;
-        
-        // Initialize Drawers
+
         const refs = {
             brain: brainRef,
             neuron: neuronRef,
@@ -64,14 +62,12 @@ export const NeuroDecorations: React.FC = () => {
             }
         });
 
-        // State for animations
         let eegData: number[] = [];
         let animationFrameId: number;
 
         const animate = () => {
             const now = Date.now();
 
-            // 1. BRAIN (Pulsing)
             if (drawers.brain) {
                 const d = drawers.brain;
                 d.clear();
@@ -97,7 +93,6 @@ export const NeuroDecorations: React.FC = () => {
                 if (Math.sin(t*1.5) > 0) d.drawRect(8, 5, 2, 2, activeColor);
             }
 
-            // 2. NEURON (Spark)
             if (drawers.neuron) {
                 const d = drawers.neuron;
                 d.clear();
@@ -110,7 +105,6 @@ export const NeuroDecorations: React.FC = () => {
                 if(signalPos < 14) d.drawRect(6 + signalPos, 7, 2, 2, '#ff0');
             }
 
-            // 3. DNA (Spinning)
             if (drawers.dna) {
                 const d = drawers.dna;
                 d.clear();
@@ -129,7 +123,6 @@ export const NeuroDecorations: React.FC = () => {
                 }
             }
 
-            // 4. EEG (Scrolling)
             if (drawers.eeg) {
                 const d = drawers.eeg;
                 d.clear();
@@ -145,15 +138,14 @@ export const NeuroDecorations: React.FC = () => {
                 }
             }
 
-            // 5. RORSCHACH (Morphing)
             if (drawers.rorschach) {
                 const d = drawers.rorschach;
                 d.clear();
                 const t = now / 1000;
                 const morph = Math.sin(t) * 2;
                 const cx = 8; const cy = 8; const color = '#111';
-                d.drawRect(cx - 2, cy - 4 + morph, 4, 8, color); 
-                d.drawRect(cx - 4 - morph, cy - 2, 2, 4, color); 
+                d.drawRect(cx - 2, cy - 4 + morph, 4, 8, color);
+                d.drawRect(cx - 4 - morph, cy - 2, 2, 4, color);
                 d.drawRect(cx + 2 + morph, cy - 2, 2, 4, color);
                 d.drawPixel(cx - 3, cy - 5, color);
                 d.drawPixel(cx + 2, cy - 5, color);
@@ -163,22 +155,20 @@ export const NeuroDecorations: React.FC = () => {
                 }
             }
 
-            // 6. COUCH (Static)
             if (drawers.couch) {
                 const d = drawers.couch;
                 d.clear();
                 const leather = '#843'; const darkLeather = '#632'; const wood = '#531';
-                d.drawRect(2, 10, 20, 4, leather); 
+                d.drawRect(2, 10, 20, 4, leather);
                 d.drawRect(2, 6, 4, 6, leather);
                 d.drawRect(3, 14, 2, 2, wood); d.drawRect(18, 14, 2, 2, wood);
                 d.drawPixel(4, 8, darkLeather); d.drawPixel(8, 11, darkLeather); d.drawPixel(14, 11, darkLeather);
             }
 
-            // 7. CLIPBOARD (Writing)
             if (drawers.clipboard) {
                 const d = drawers.clipboard;
                 d.clear();
-                d.drawRect(2, 2, 8, 12, '#852'); 
+                d.drawRect(2, 2, 8, 12, '#852');
                 d.drawRect(3, 3, 6, 10, '#fff');
                 d.drawRect(4, 1, 4, 2, '#aaa');
                 const t = Math.floor(now / 200);
@@ -190,18 +180,17 @@ export const NeuroDecorations: React.FC = () => {
                 d.drawPixel(handX-1, handY+1, '#33f');
             }
 
-            // 8. PILLS (Floating)
             if (drawers.pills) {
                 const d = drawers.pills;
                 d.clear();
                 const t = now;
-                d.drawRect(4, 4, 6, 8, 'rgba(200, 200, 255, 0.5)'); 
-                d.drawRect(5, 2, 4, 2, '#eee'); 
-                d.drawRect(4, 12, 6, 1, 'rgba(200, 200, 255, 0.5)'); 
+                d.drawRect(4, 4, 6, 8, 'rgba(200, 200, 255, 0.5)');
+                d.drawRect(5, 2, 4, 2, '#eee');
+                d.drawRect(4, 12, 6, 1, 'rgba(200, 200, 255, 0.5)');
                 d.drawRect(5, 6, 4, 4, '#fff'); d.drawRect(6, 7, 2, 2, '#f00');
                 const floatY = Math.sin(t/300) * 2;
-                d.drawRect(10, 8 + floatY, 3, 1, '#f00'); 
-                d.drawRect(13, 8 + floatY, 3, 1, '#fff'); 
+                d.drawRect(10, 8 + floatY, 3, 1, '#f00');
+                d.drawRect(13, 8 + floatY, 3, 1, '#fff');
             }
 
             animationFrameId = requestAnimationFrame(animate);
