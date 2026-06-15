@@ -18,7 +18,7 @@ site:
 seo:
   title: "Vilde Brecke | Ph.d. i Psykologi & Veileder i Bergen"
   metaTitle: "Vilde Brecke | Ph.d. i Psykologi & Veileder i Bergen"
-  description: "Sliter du med metode og statistikk? Jeg er psykolog (Ph.d.) og tilbyr skreddersydd veiledning for psykologistudenter i Bergen og på nett. Mestre SPSS, R-Studio og akademisk skriving."
+  description: "Sliter du med metode og statistikk? Jeg har en Ph.d. i psykologi og tilbyr skreddersydd veiledning for psykologistudenter i Bergen og på nett. Mestre SPSS, R-Studio og akademisk skriving."
   keywords: "Vilde Brecke, Psykolog, Veileder, Bergen, Statistikk, Metode, SPSS, R-Studio, Bacheloroppgave, Masteroppgave, Privatist, Undervisning, Sensor, Psykologistudent"
   author: "Vilde Brecke"
   canonical: "https://psykologistudent.no/"
@@ -46,7 +46,7 @@ home:
 about:
   imageAlt: "Vilde Action"
   body:
-    - "Jeg er utdannet psykolog med doktorgrad (Ph.d.) i psykologi."
+    - "Jeg har en mastergrad og doktorgrad (Ph.d.) i psykologi."
     - "Med bred erfaring som sensor og underviser ved universitetet, vet jeg nøyaktig hva som kreves for å gå fra en **C til en A**."
     - "Jeg brenner for å gjøre tungt fagstoff forståelig."
 
