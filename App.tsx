@@ -95,6 +95,24 @@ const HomeSection = () => (
       <p className="opacity-90 leading-relaxed text-sm md:text-base font-medium max-w-sm text-balance">
         <MarkdownInline>{CONTENT.home.description}</MarkdownInline>
       </p>
+
+      <div className="flex flex-wrap items-center gap-3 pt-1">
+        <a
+          href={`mailto:${CONTENT.site.email}`}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-orange-900 rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
+        >
+          {CONTENT.contact.emailButton}
+          <ArrowRight className="w-4 h-4" />
+        </a>
+
+        <span className="inline-flex md:hidden items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full border border-white/15 backdrop-blur-sm">
+          <GraduationCap size={16} className="text-white shrink-0" />
+          <span className="leading-tight text-left">
+            <span className="block font-bold text-white text-xs">{CONTENT.home.credentialTitle}</span>
+            <span className="block opacity-70 text-[10px]">{CONTENT.home.credentialSubtitle}</span>
+          </span>
+        </span>
+      </div>
     </div>
 
     <div className="hidden md:flex flex-col items-center justify-center gap-3 p-4 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
@@ -320,33 +338,35 @@ const SECTIONS: SectionLayout[] = [
     component: <HomeSection />,
     colSpan: 2,
     rowSpan: 1,
-    className: `bg-gradient-to-br ${THEME.gradientFrom} ${THEME.gradientTo} text-white border-transparent flex flex-col justify-center`,
+    className: `bg-gradient-to-br ${THEME.gradientFrom} ${THEME.gradientTo} text-white border-transparent flex flex-col justify-center order-4 md:order-none`,
   },
   {
     id: 'about',
     component: <AboutSection />,
     colSpan: 2,
     rowSpan: 1,
-    className: 'overflow-hidden !p-0',
+    className: 'overflow-hidden !p-0 order-1 md:order-none',
   },
   {
     id: 'contact',
     component: <ContactSection />,
     colSpan: 4,
     rowSpan: 1,
-    className: '!bg-orange-600 text-white !p-0 overflow-hidden border-transparent',
+    className: '!bg-orange-600 text-white !p-0 overflow-hidden border-transparent order-5 md:order-none',
   },
   {
     id: 'cv',
     component: <CvSection />,
     colSpan: 4,
     rowSpan: 2,
+    className: 'order-2 md:order-none',
   },
   {
     id: 'research',
     component: <ResearchSection />,
     colSpan: 4,
     rowSpan: 1,
+    className: 'order-3 md:order-none',
   },
 ];
 
